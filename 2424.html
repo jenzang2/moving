@@ -69,6 +69,23 @@
   #toast { position: fixed; left: 50%; bottom: 30px; transform: translateX(-50%); background: #2d3e50; color: #fff; padding: 10px 18px; border-radius: 20px; font-size: 14px; opacity: 0; transition: opacity .2s; pointer-events: none; z-index: 20; }
   #toast.show { opacity: 1; }
   @media (max-width: 900px) { .form-grid { grid-template-columns: 1fr 1fr; } }
+
+/* ===== 모바일 보정 ===== */
+h1 { white-space: nowrap; }
+.mx-scroll {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior-x: contain;
+}
+.mx-scroll > table { min-width: 860px; }
+.mx-scroll th { white-space: nowrap; }
+@media (max-width: 700px) {
+  h1 { font-size: 20px !important; }
+  .mx-head { flex-wrap: wrap !important; row-gap: 10px; }
+  .mx-head > h1 { flex: 1 0 100% !important; }
+}
+
+
 </style>
 </head>
 <body>
@@ -522,5 +539,25 @@ onAuthStateChanged(auth, user => {
   });
 });
 </script>
+
+<script>
+(function () {
+  function fixMobile() {
+    var h1 = document.querySelector('h1');
+    if (h1 && h1.parentElement) h1.parentElement.classList.add('mx-head');
+    document.querySelectorAll('table').forEach(function (t) {
+      if (t.parentElement.classList.contains('mx-scroll')) return;
+      var w = document.createElement('div');
+      w.className = 'mx-scroll';
+      t.parentNode.insertBefore(w, t);
+      w.appendChild(t);
+    });
+  }
+  fixMobile();
+  new MutationObserver(fixMobile).observe(document.body, { childList: true, subtree: true });
+})();
+</script>
+
+
 </body>
 </html>
