@@ -77,6 +77,31 @@
   #toast { position: fixed; left: 50%; bottom: 30px; transform: translateX(-50%); background: #2d3e50; color: #fff; padding: 10px 18px; border-radius: 20px; font-size: 14px; opacity: 0; transition: opacity .2s; pointer-events: none; z-index: 20; }
   #toast.show { opacity: 1; }
 
+  /* ===== 탭 ===== */
+  .tabs { display: flex; gap: 8px; margin-bottom: 16px; }
+  .tab { flex: none; background: #e3e6ea; color: #555; font-weight: bold; padding: 10px 18px; border-radius: 20px; }
+  .tab.active { background: #2d3e50; color: #fff; }
+
+  /* ===== 살 것 메모 ===== */
+  .shop-add { display: flex; gap: 8px; }
+  .shop-add input { flex: 1; }
+  .shop-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 16px; }
+  .shop-grid .card { margin-bottom: 0; }
+  .store-head { display: flex; align-items: center; gap: 6px; margin-bottom: 6px; }
+  .store-name { flex: 1; min-width: 0; border: none; font-size: 16px; font-weight: bold; padding: 4px 6px; background: transparent; }
+  .store-name:focus, .shop-item .txt:focus { background: #fffbe6; outline: 1px solid #f0d878; }
+  .store-count { font-size: 12px; color: #888; white-space: nowrap; }
+  .shop-item { display: flex; align-items: center; gap: 8px; padding: 4px 0; border-top: 1px solid #f0f0f0; }
+  .shop-item input[type=checkbox] { width: 20px; height: 20px; flex: none; margin: 0 2px; cursor: pointer; }
+  .shop-item .txt { flex: 1; min-width: 0; border: none; padding: 6px; background: transparent; }
+  .shop-item.done .txt { text-decoration: line-through; color: #aaa; }
+  .x-btn { background: none; color: #bbb; padding: 4px 8px; font-size: 18px; line-height: 1; }
+  .x-btn:hover { color: #c0392b; }
+  .shop-empty { font-size: 13px; color: #aaa; padding: 8px 2px; border-top: 1px solid #f0f0f0; }
+  .add-line { display: flex; gap: 6px; margin-top: 10px; }
+  .add-line input { flex: 1; min-width: 0; }
+  .link-btn { background: none; color: #888; font-size: 12px; padding: 6px 2px 0; text-decoration: underline; }
+
   /* ===== 모바일 보정 (표 안에서 손가락으로 가로 스크롤) ===== */
   .mx-scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; overscroll-behavior-x: contain; }
   .mx-scroll > table { min-width: 860px; }
@@ -84,6 +109,8 @@
   @media (max-width: 700px) {
     header { row-gap: 10px; }
     header h1 { flex: 1 0 100%; }
+    main { padding: 14px; }
+    .tab { flex: 1; padding: 10px 8px; }
   }
 </style>
 </head>
@@ -103,41 +130,61 @@
 </header>
 <main>
 
-  <div class="card">
-    <h2>새 항목 / 후보 추가</h2>
-    <div class="form-grid">
-      <div><label>구분</label>
-        <select id="fCat"><option>시공</option><option>구매</option><option>서비스</option><option>기타</option></select></div>
-      <div><label>항목 *</label><input id="fName" list="nameList" placeholder="예: 줄눈"></div>
-      <div><label>업체·제품 *</label><input id="fVendor" placeholder="예: A줄눈"></div>
-      <div><label>금액 (원)</label><input id="fPrice" placeholder="600000"></div>
-      <div><label>연락처</label><input id="fContact" placeholder="010-0000-0000" inputmode="tel"></div>
-      <div><label>링크</label><input id="fLink" placeholder="https://..."></div>
-      <div><label>비고</label><input id="fMemo" placeholder="예: 케라폭시, 욕실2+현관, AS 2년"></div>
-    </div>
-    <datalist id="nameList"></datalist>
-    <div class="actions"><button class="btn-primary" id="btnAdd">추가</button></div>
+  <div class="tabs">
+    <button class="tab" data-tab="quote">📋 견적 비교</button>
+    <button class="tab" data-tab="shop" id="tabShopBtn">🛒 살 것 메모</button>
   </div>
 
-  <div class="card">
-    <h2>요약</h2>
-    <div class="summary" id="summary"></div>
-    <div class="sel-title">선택한 후보</div>
-    <div id="selectedList"></div>
+  <!-- ===================== 탭1: 견적 비교 ===================== -->
+  <div id="tab-quote">
+    <div class="card">
+      <h2>새 항목 / 후보 추가</h2>
+      <div class="form-grid">
+        <div><label>구분</label>
+          <select id="fCat"><option>시공</option><option>구매</option><option>서비스</option><option>기타</option></select></div>
+        <div><label>항목 *</label><input id="fName" list="nameList" placeholder="예: 줄눈"></div>
+        <div><label>업체·제품 *</label><input id="fVendor" placeholder="예: A줄눈"></div>
+        <div><label>금액 (원)</label><input id="fPrice" placeholder="600000"></div>
+        <div><label>연락처</label><input id="fContact" placeholder="010-0000-0000" inputmode="tel"></div>
+        <div><label>링크</label><input id="fLink" placeholder="https://..."></div>
+        <div><label>비고</label><input id="fMemo" placeholder="예: 케라폭시, 욕실2+현관, AS 2년"></div>
+      </div>
+      <datalist id="nameList"></datalist>
+      <div class="actions"><button class="btn-primary" id="btnAdd">추가</button></div>
+    </div>
+
+    <div class="card">
+      <h2>요약</h2>
+      <div class="summary" id="summary"></div>
+      <div class="sel-title">선택한 후보</div>
+      <div id="selectedList"></div>
+    </div>
+
+    <div class="card">
+      <div class="toolbar">
+        <select id="filterCat"><option value="">전체 구분</option><option>시공</option><option>구매</option><option>서비스</option><option>기타</option></select>
+        <select id="filterStatus"><option value="">전체 상태</option><option value="wait">미결정만</option><option value="done">결정완료만</option></select>
+        <input id="search" placeholder="검색 (항목, 업체, 비고)">
+        <span style="flex:1"></span>
+        <button class="btn-gray" id="btnCsv">엑셀(CSV) 내보내기</button>
+        <button class="btn-gray" id="btnBackup">백업 저장</button>
+        <button class="btn-gray" id="btnRestore">백업 불러오기</button>
+        <input type="file" id="fileInput" accept=".json" style="display:none">
+      </div>
+      <div id="list"></div>
+    </div>
   </div>
 
-  <div class="card">
-    <div class="toolbar">
-      <select id="filterCat"><option value="">전체 구분</option><option>시공</option><option>구매</option><option>서비스</option><option>기타</option></select>
-      <select id="filterStatus"><option value="">전체 상태</option><option value="wait">미결정만</option><option value="done">결정완료만</option></select>
-      <input id="search" placeholder="검색 (항목, 업체, 비고)">
-      <span style="flex:1"></span>
-      <button class="btn-gray" id="btnCsv">엑셀(CSV) 내보내기</button>
-      <button class="btn-gray" id="btnBackup">백업 저장</button>
-      <button class="btn-gray" id="btnRestore">백업 불러오기</button>
-      <input type="file" id="fileInput" accept=".json" style="display:none">
+  <!-- ===================== 탭2: 살 것 메모 ===================== -->
+  <div id="tab-shop" style="display:none">
+    <div class="card">
+      <h2>가게 / 장소 추가</h2>
+      <div class="shop-add">
+        <input id="sName" placeholder="예: 코스트코, 다이소, 이케아">
+        <button class="btn-primary" id="btnAddStore">추가</button>
+      </div>
     </div>
-    <div id="list"></div>
+    <div id="shopList" class="shop-grid"></div>
   </div>
 
 </main>
@@ -175,37 +222,12 @@ function bindPhoneInput(el) {
   el.addEventListener('blur', () => el.value = formatPhone(el.value));
 }
 
-// ---------- 데이터 ----------
-function migrate(arr) {
-  return (arr || []).filter(Boolean).map(i => {
-    let contact = i.contact || '', link = i.link;
-    if (link === undefined) { link = ''; if (/^https?:\/\//.test(contact)) { link = contact; contact = ''; } }
-    return {
-      id: String(i.id || Date.now() + '' + Math.random()), selected: !!i.selected, multi: !!i.multi,
-      cat: i.cat || '기타', name: i.name || '', vendor: i.vendor || '', price: Number(i.price) || 0,
-      contact: formatPhone(contact), link: link || '', memo: i.memo || ''
-    };
-  });
-}
-let items = [];
-let editingId = null, addingName = null, dragName = null, pendingRemote = false, noDrag = false;
-
-window.applyRemote = data => {
-  items = migrate(Array.isArray(data) ? data : (data ? Object.values(data) : []));
-  if (editingId) { pendingRemote = true; return; }
-  render();
-};
-function persist() {
-  render();
-  if (window.cloudSave) window.cloudSave(items);
-  else alert('아직 서버에 연결되지 않았어요. 잠시 후 다시 시도해 주세요.');
-}
-
+// ---------- 공통 ----------
 function won(n) { return (Number(n) || 0).toLocaleString('ko-KR') + '원'; }
 function esc(s) { return String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
 function parsePrice(v) { return Number(String(v).replace(/[^0-9]/g, '')) || 0; }
 function newId() { return Date.now() + '' + Math.random().toString().slice(2, 8); }
-function isMulti(name) { return items.some(i => i.name === name && i.multi); }
+function toArr(d) { return Array.isArray(d) ? d : (d ? Object.values(d) : []); }
 
 let toastTimer;
 function toast(msg) {
@@ -221,6 +243,45 @@ async function copyText(text) {
   toast('링크를 복사했어요');
 }
 document.addEventListener('click', e => { const b = e.target.closest('[data-copy]'); if (b) copyText(b.dataset.copy); });
+
+// ---------- 탭 ----------
+function showTab(t) {
+  ['quote', 'shop'].forEach(k => {
+    $('tab-' + k).style.display = k === t ? '' : 'none';
+    document.querySelector(`[data-tab="${k}"]`).classList.toggle('active', k === t);
+  });
+  try { localStorage.setItem('moving-tab', t); } catch {}
+}
+document.querySelectorAll('[data-tab]').forEach(b => b.onclick = () => showTab(b.dataset.tab));
+
+// ===================================================================
+//  탭1: 견적 비교
+// ===================================================================
+function migrate(arr) {
+  return toArr(arr).filter(Boolean).map(i => {
+    let contact = i.contact || '', link = i.link;
+    if (link === undefined) { link = ''; if (/^https?:\/\//.test(contact)) { link = contact; contact = ''; } }
+    return {
+      id: String(i.id || Date.now() + '' + Math.random()), selected: !!i.selected, multi: !!i.multi,
+      cat: i.cat || '기타', name: i.name || '', vendor: i.vendor || '', price: Number(i.price) || 0,
+      contact: formatPhone(contact), link: link || '', memo: i.memo || ''
+    };
+  });
+}
+let items = [];
+let editingId = null, addingName = null, dragName = null, pendingRemote = false, noDrag = false;
+
+window.applyRemote = data => {
+  items = migrate(data);
+  if (editingId) { pendingRemote = true; return; }
+  render();
+};
+function persist() {
+  render();
+  if (window.cloudSave) window.cloudSave(items);
+  else alert('아직 서버에 연결되지 않았어요. 잠시 후 다시 시도해 주세요.');
+}
+function isMulti(name) { return items.some(i => i.name === name && i.multi); }
 ['pointerup', 'pointercancel'].forEach(ev => document.addEventListener(ev, () => setTimeout(() => noDrag = false, 0)));
 
 function contactCell(c) {
@@ -243,7 +304,6 @@ function groupItems(list) {
   return map;
 }
 
-// ---------- 위쪽 입력칸으로 추가 ----------
 bindPhoneInput($('fContact'));
 $('btnAdd').onclick = () => {
   const data = {
@@ -262,7 +322,6 @@ $('btnAdd').onclick = () => {
 document.querySelectorAll('.form-grid input').forEach(el =>
   el.addEventListener('keydown', e => { if (e.key === 'Enter') $('btnAdd').click(); }));
 
-// ---------- 표 안에서 수정 / 추가 ----------
 function startEdit(id) { editingId = id; addingName = null; render(); }
 function startAdd(name) { editingId = NEW_ID; addingName = name; render(); }
 function cancelEdit() { editingId = null; addingName = null; render(); }
@@ -301,7 +360,6 @@ function toggleSelect(id) {
 }
 function unselect(id) { const it = items.find(i => i.id === id); if (it) { it.selected = false; persist(); } }
 
-// 중복선택 켜기/끄기
 function toggleMulti(name, on) {
   const list = items.filter(i => i.name === name);
   if (!list.length) return;
@@ -330,7 +388,6 @@ function editRow(no, it) {
     </td></tr>`;
 }
 
-// ---------- 드래그로 항목 순서 변경 ----------
 function moveGroup(from, to, after) {
   if (from === to) return;
   const moving = items.filter(i => i.name === from);
@@ -377,7 +434,6 @@ function bindDrag() {
   });
 }
 
-// ---------- 화면 그리기 ----------
 function render() {
   pendingRemote = false;
   $('nameList').innerHTML = [...new Set(items.map(i => i.name))].map(n => `<option value="${esc(n)}">`).join('');
@@ -387,7 +443,6 @@ function render() {
   const posInGroup = new Map();
   groups.forEach(list => list.forEach((it, i) => posInGroup.set(it.id, i)));
 
-  // 선택 목록: 구분 순서 → 항목(드래그) 순서 → 후보 번호 순 → 같은 항목끼리 붙음
   const selected = items.filter(i => i.selected).sort((a, b) =>
     (CATS.indexOf(a.cat) - CATS.indexOf(b.cat)) ||
     (groupOrder.get(a.name) - groupOrder.get(b.name)) ||
@@ -492,7 +547,165 @@ function render() {
 ['filterCat','filterStatus'].forEach(id => $(id).onchange = render);
 $('search').oninput = render;
 
-// ---------- 내보내기 / 백업 ----------
+// ===================================================================
+//  탭2: 살 것 메모
+// ===================================================================
+let shops = [];
+let pendingShop = false, focusAddStore = null;
+
+function migrateShop(d) {
+  return toArr(d).filter(Boolean).map(s => ({
+    id: String(s.id || newId()), name: s.name || '',
+    items: toArr(s.items).filter(Boolean).map(t => ({ id: String(t.id || newId()), text: t.text || '', done: !!t.done }))
+  }));
+}
+function shopTyping() {
+  const a = document.activeElement;
+  return !!(a && a.closest && a.closest('#tab-shop') && a.tagName === 'INPUT' && a.type !== 'checkbox');
+}
+window.applyShop = data => {
+  shops = migrateShop(data);
+  if (shopTyping()) { pendingShop = true; return; } // 입력 중이면 화면 갱신 미룸
+  renderShop();
+};
+function persistShop(doRender = true) {
+  if (doRender) renderShop();
+  if (window.cloudSaveShop) window.cloudSaveShop(shops);
+  else alert('아직 서버에 연결되지 않았어요. 잠시 후 다시 시도해 주세요.');
+}
+const findStore = sid => shops.find(s => s.id === sid);
+
+function addStore() {
+  const name = $('sName').value.trim();
+  if (!name) { $('sName').focus(); return; }
+  const dup = shops.find(s => s.name === name);
+  if (dup) {
+    toast(`'${name}'는 이미 있어요`);
+    $('sName').value = '';
+    const inp = document.querySelector(`[data-sid="${dup.id}"] [data-act="addin"]`);
+    if (inp) { inp.focus(); inp.scrollIntoView({ block: 'center', behavior: 'smooth' }); }
+    return;
+  }
+  const s = { id: newId(), name, items: [] };
+  shops.push(s);
+  $('sName').value = '';
+  focusAddStore = s.id;
+  persistShop();
+}
+function addShopItem(sid) {
+  const s = findStore(sid); if (!s) return;
+  const inp = document.querySelector(`[data-sid="${sid}"] [data-act="addin"]`);
+  const texts = (inp ? inp.value : '').split(/[,，\n]/).map(t => t.trim()).filter(Boolean);
+  if (!texts.length) { if (inp) inp.focus(); return; }
+  texts.forEach(text => s.items.push({ id: newId(), text, done: false }));
+  focusAddStore = sid;
+  persistShop();
+}
+function moveStore(sid, dir) {
+  const i = shops.findIndex(s => s.id === sid), j = i + dir;
+  if (i < 0 || j < 0 || j >= shops.length) return;
+  [shops[i], shops[j]] = [shops[j], shops[i]];
+  persistShop();
+}
+function deleteStore(sid) {
+  const s = findStore(sid); if (!s) return;
+  if (!confirm(`'${s.name}'와 안에 적은 ${s.items.length}개를 모두 삭제할까요?`)) return;
+  shops = shops.filter(x => x.id !== sid);
+  persistShop();
+}
+
+function renderShop() {
+  pendingShop = false;
+  const left = shops.reduce((n, s) => n + s.items.filter(t => !t.done).length, 0);
+  $('tabShopBtn').textContent = left ? `🛒 살 것 메모 (${left})` : '🛒 살 것 메모';
+
+  if (!shops.length) {
+    $('shopList').innerHTML = `<div class="card empty" style="grid-column:1/-1">아직 가게가 없어요. 위에서 "코스트코"처럼 추가해보세요!</div>`;
+    return;
+  }
+  $('shopList').innerHTML = shops.map((s, si) => {
+    const remain = s.items.filter(t => !t.done).length;
+    const doneN = s.items.length - remain;
+    const rows = s.items.length
+      ? s.items.map(t => `<div class="shop-item ${t.done ? 'done' : ''}" data-tid="${t.id}">
+          <input type="checkbox" data-act="done" ${t.done ? 'checked' : ''}>
+          <input class="txt" data-act="text" value="${esc(t.text)}">
+          <button class="x-btn" data-act="delitem" title="삭제">×</button></div>`).join('')
+      : `<div class="shop-empty">아직 살 것이 없어요. 아래에 적어보세요.</div>`;
+    return `<div class="card" data-sid="${s.id}">
+      <div class="store-head">
+        <span>🛒</span>
+        <input class="store-name" data-act="rename" value="${esc(s.name)}" title="눌러서 이름 바꾸기">
+        <span class="store-count">${remain}/${s.items.length}</span>
+        <button class="btn-small btn-gray" data-act="up" ${si === 0 ? 'disabled' : ''}>▲</button>
+        <button class="btn-small btn-gray" data-act="down" ${si === shops.length - 1 ? 'disabled' : ''}>▼</button>
+        <button class="btn-small btn-red" data-act="delstore">삭제</button>
+      </div>
+      ${rows}
+      <div class="add-line">
+        <input data-act="addin" placeholder="살 것 입력 후 Enter (쉼표로 여러 개)" enterkeyhint="done">
+        <button class="btn-small btn-primary" data-act="additem">추가</button>
+      </div>
+      ${doneN ? `<button class="link-btn" data-act="cleardone">산 것 ${doneN}개 지우기</button>` : ''}
+    </div>`;
+  }).join('');
+
+  if (focusAddStore) {
+    const inp = document.querySelector(`[data-sid="${focusAddStore}"] [data-act="addin"]`);
+    if (inp) inp.focus();
+    focusAddStore = null;
+  }
+}
+
+$('btnAddStore').onclick = addStore;
+$('sName').addEventListener('keydown', e => { if (e.key === 'Enter') addStore(); });
+
+const shopCtx = el => {
+  const sid = el.closest('[data-sid]')?.dataset.sid, tid = el.closest('[data-tid]')?.dataset.tid;
+  const s = findStore(sid);
+  return { sid, tid, s, t: s && tid ? s.items.find(x => x.id === tid) : null };
+};
+$('shopList').addEventListener('click', e => {
+  const b = e.target.closest('button[data-act]'); if (!b) return;
+  const { sid, tid, s } = shopCtx(b);
+  switch (b.dataset.act) {
+    case 'up': moveStore(sid, -1); break;
+    case 'down': moveStore(sid, 1); break;
+    case 'delstore': deleteStore(sid); break;
+    case 'additem': addShopItem(sid); break;
+    case 'delitem': if (s) { s.items = s.items.filter(x => x.id !== tid); persistShop(); } break;
+    case 'cleardone': if (s) { s.items = s.items.filter(x => !x.done); persistShop(); } break;
+  }
+});
+$('shopList').addEventListener('change', e => {
+  const el = e.target, act = el.dataset.act;
+  const { s, t } = shopCtx(el);
+  if (!s) return;
+  if (act === 'done' && t) { t.done = el.checked; persistShop(); }
+  if (act === 'text' && t) {
+    const v = el.value.trim();
+    if (!v) { s.items = s.items.filter(x => x !== t); persistShop(); }
+    else { t.text = v; persistShop(false); }
+  }
+  if (act === 'rename') {
+    const v = el.value.trim();
+    if (!v) { el.value = s.name; return; }
+    s.name = v; persistShop(false);
+  }
+});
+$('shopList').addEventListener('keydown', e => {
+  if (e.key !== 'Enter') return;
+  const act = e.target.dataset.act;
+  if (act === 'addin') { e.preventDefault(); addShopItem(shopCtx(e.target).sid); }
+  if (act === 'text' || act === 'rename') e.target.blur();
+});
+$('tab-shop').addEventListener('focusout', () => setTimeout(() => {
+  if (pendingShop && !shopTyping()) renderShop();
+}, 0));
+
+// ===================================================================
+//  내보내기 / 백업 (견적 + 살 것 메모 함께)
+// ===================================================================
 $('btnCsv').onclick = () => {
   const rows = [['구분','항목','후보','업체·제품','금액','연락처','링크','비고','선택']];
   groupItems(items).forEach((list, name) => list.forEach((it, idx) =>
@@ -500,7 +713,8 @@ $('btnCsv').onclick = () => {
   const csv = rows.map(r => r.map(v => `"${String(v ?? '').replace(/"/g, '""')}"`).join(',')).join('\r\n');
   download('\uFEFF' + csv, '이사준비_견적비교.csv', 'text/csv;charset=utf-8');
 };
-$('btnBackup').onclick = () => download(JSON.stringify(items, null, 2), `이사준비_백업_${new Date().toISOString().slice(0, 10)}.json`, 'application/json');
+$('btnBackup').onclick = () => download(JSON.stringify({ version: 2, items, shopping: shops }, null, 2),
+  `이사준비_백업_${new Date().toISOString().slice(0, 10)}.json`, 'application/json');
 $('btnRestore').onclick = () => $('fileInput').click();
 $('fileInput').onchange = e => {
   const file = e.target.files[0]; if (!file) return;
@@ -508,10 +722,16 @@ $('fileInput').onchange = e => {
   reader.onload = () => {
     try {
       const data = JSON.parse(reader.result);
-      if (!Array.isArray(data)) throw 0;
-      if (confirm(`백업에서 ${data.length}개 후보를 불러올까요? (지금 데이터는 덮어써지고, 상대방 화면에도 바로 반영돼요)`)) {
-        items = migrate(data); editingId = null; addingName = null; persist();
-      }
+      const isOld = Array.isArray(data);               // 예전 백업 (견적만)
+      const qItems = isOld ? data : data.items;
+      if (!Array.isArray(qItems)) throw 0;
+      const sh = isOld ? null : migrateShop(data.shopping);
+      const msg = isOld
+        ? `백업에서 견적 후보 ${qItems.length}개를 불러올까요?\n(살 것 메모는 그대로 두고, 견적만 덮어써요)`
+        : `백업에서 견적 후보 ${qItems.length}개, 가게 ${sh.length}곳을 불러올까요?\n(지금 데이터는 덮어써지고, 상대방 화면에도 바로 반영돼요)`;
+      if (!confirm(msg)) return;
+      items = migrate(qItems); editingId = null; addingName = null; persist();
+      if (sh) { shops = sh; persistShop(); }
     } catch { alert('백업 파일이 올바르지 않아요.'); }
   };
   reader.readAsText(file);
@@ -523,7 +743,12 @@ function download(content, filename, type) {
   a.download = filename; a.click();
   URL.revokeObjectURL(a.href);
 }
+
+let savedTab = 'quote';
+try { savedTab = localStorage.getItem('moving-tab') || 'quote'; } catch {}
+showTab(savedTab === 'shop' ? 'shop' : 'quote');
 render();
+renderShop();
 </script>
 
 <!-- ===================== Firebase 연결 부분 ===================== -->
@@ -546,11 +771,17 @@ const firebaseConfig = {
 const el = id => document.getElementById(id);
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
-const dataRef = ref(getDatabase(app), 'planner/items');
-let unsubscribe = null;
+const db = getDatabase(app);
+const dataRef = ref(db, 'planner/items');
+const shopRef = ref(db, 'planner/shopping');
+let unsubs = [];
 
 const showGate = msg => { el('gate').style.display = 'flex'; el('gateMsg').textContent = msg || ''; };
 const setSync = t => el('syncState').textContent = t;
+const saver = r => data => {
+  setSync('저장 중…');
+  set(r, data).then(() => setSync('✔ 저장됨')).catch(() => setSync('⚠ 저장 실패'));
+};
 
 if (location.protocol === 'file:') showGate('이 버전은 내 PC 파일로는 로그인이 안 돼요. GitHub Pages 주소로 열어주세요.');
 
@@ -559,23 +790,26 @@ el('btnLogin').onclick = () =>
 el('btnLogout').onclick = () => signOut(auth);
 
 onAuthStateChanged(auth, user => {
-  if (unsubscribe) { unsubscribe(); unsubscribe = null; }
-  window.cloudSave = null;
+  unsubs.forEach(f => f()); unsubs = [];
+  window.cloudSave = null; window.cloudSaveShop = null;
   if (!user) { showGate(''); return; }
   el('gateMsg').textContent = '불러오는 중…';
-  unsubscribe = onValue(dataRef, snap => {
+
+  unsubs.push(onValue(dataRef, snap => {
     el('gate').style.display = 'none';
     el('userEmail').textContent = user.email;
-    window.cloudSave = data => {
-      setSync('저장 중…');
-      set(dataRef, data).then(() => setSync('✔ 저장됨')).catch(() => setSync('⚠ 저장 실패'));
-    };
+    window.cloudSave = saver(dataRef);
     setSync('✔ 동기화됨');
     window.applyRemote(snap.val());
   }, () => {
     showGate(`${user.email} 계정은 접근 권한이 없어요. 등록된 계정으로 로그인해 주세요.`);
     signOut(auth);
-  });
+  }));
+
+  unsubs.push(onValue(shopRef, snap => {
+    window.cloudSaveShop = saver(shopRef);
+    window.applyShop(snap.val());
+  }, () => {}));
 });
 </script>
 </body>
