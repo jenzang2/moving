@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>이사 준비 견적 비교</title>
+<style>
+  * { box-sizing: border-box; }
+  body { font-family: "Malgun Gothic", "Apple SD Gothic Neo", sans-serif; margin: 0; background: #f4f5f7; color: #222; }
+  header { background: #2d3e50; color: #fff; padding: 12px 24px; display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+  header h1 { margin: 0; font-size: 20px; flex: 1; }
+  header .user { font-size: 13px; opacity: .85; }
+  header .sync { font-size: 12px; background: rgba(255,255,255,.15); padding: 3px 10px; border-radius: 10px; }
+  main { max-width: 1200px; margin: 0 auto; padding: 20px; }
+  .card { background: #fff; border-radius: 10px; padding: 16px; margin-bottom: 16px; box-shadow: 0 1px 3px rgba(0,0,0,.08); }
+  .card h2 { margin: 0 0 12px; font-size: 16px; }
+  .form-grid { display: grid; grid-template-columns: 90px 130px 140px 110px 150px 170px 1fr; gap: 8px; }
+  .form-grid label { font-size: 12px; color: #666; display: block; margin-bottom: 3px; }
+  input, select { width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 6px; font-size: 14px; font-family: inherit; }
+  button, .btn { padding: 8px 14px; border: none; border-radius: 6px; cursor: pointer; font-size: 14px; font-family: inherit; text-decoration: none; display: inline-block; }
+  .btn-primary { background: #2d7ff9; color: #fff; }
+  .btn-gray { background: #e3e6ea; color: #333; }
+  .btn-red { background: #fde8e8; color: #c0392b; }
+  .btn-call { background: #e3f6ea; color: #1e8449; }
+  .btn-open { background: #e8f0fe; color: #1a5fd0; }
+  .btn-small { padding: 4px 8px; font-size: 12px; }
+  .actions { margin-top: 10px; display: flex; gap: 8px; }
+  .summary { display: flex; gap: 12px; flex-wrap: wrap; }
+  .stat { flex: 1; min-width: 150px; background: #f8f9fb; border-radius: 8px; padding: 12px; }
+  .stat .label { font-size: 12px; color: #777; }
+  .stat .value { font-size: 20px; font-weight: bold; margin-top: 4px; }
+  .stat.total .value { color: #2d7ff9; }
+  .sel-title { font-size: 13px; color: #777; margin: 16px 0 6px; }
+  .sel-empty { font-size: 13px; color: #aaa; padding: 10px 0; }
+  .toolbar { display: flex; gap: 8px; margin-bottom: 12px; flex-wrap: wrap; }
+  .toolbar select, .toolbar input { width: auto; }
+  .group { border: 1px solid #e3e6ea; border-radius: 8px; margin-bottom: 12px; overflow: hidden; transition: opacity .15s; }
+  .group.dragging { opacity: .35; }
+  .group.drop-before { box-shadow: 0 -4px 0 #2d7ff9; }
+  .group.drop-after { box-shadow: 0 4px 0 #2d7ff9; }
+  .group-head { background: #f0f3f7; padding: 10px 12px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 6px; cursor: grab; user-select: none; }
+  .group-head:active { cursor: grabbing; }
+  .group-head .title { font-weight: bold; font-size: 15px; }
+  .group-foot { border-top: 1px solid #eee; }
+  .add-row-btn { width: 100%; background: none; color: #2d7ff9; font-size: 13px; padding: 8px 12px; border-radius: 0; text-align: left; }
+  .add-row-btn:hover { background: #f3f8ff; }
+  .drag-handle { color: #aab; font-size: 16px; margin-right: 8px; }
+  .badge { display: inline-block; font-size: 11px; padding: 2px 8px; border-radius: 10px; margin-right: 6px; color: #fff; white-space: nowrap; }
+  .b-시공 { background: #e67e22; } .b-구매 { background: #27ae60; } .b-서비스 { background: #8e44ad; } .b-기타 { background: #7f8c8d; }
+  .status-done { color: #27ae60; font-size: 13px; font-weight: bold; }
+  .status-wait { color: #e74c3c; font-size: 13px; font-weight: bold; }
+  table { width: 100%; border-collapse: collapse; font-size: 14px; table-layout: fixed; }
+  th, td { padding: 8px 10px; border-top: 1px solid #eee; text-align: left; vertical-align: middle; overflow-wrap: anywhere; }
+  th { font-size: 12px; color: #777; font-weight: normal; background: #fafbfc; }
+  td.price, th.price { text-align: right; white-space: nowrap; }
+  td.memo { white-space: pre-wrap; color: #444; }
+  td.btns, td.nowrap { white-space: nowrap; }
+  td.btns { text-align: right; }
+  .phone { margin-right: 6px; }
+  tr.selected { background: #eaf3ff; }
+  tr.editing { background: #fffbe6; }
+  tr.editing input { padding: 5px 6px; font-size: 13px; }
+  .cheap { display: inline-block; font-size: 11px; color: #1e8449; background: #e3f6ea; padding: 1px 6px; border-radius: 8px; margin-right: 6px; }
+  .empty { text-align: center; color: #999; padding: 30px; }
+  .sel-table td { background: #f8fbff; }
+  #gate { position: fixed; inset: 0; background: #f4f5f7; display: flex; align-items: center; justify-content: center; z-index: 10; }
+  #gate .box { background: #fff; padding: 32px; border-radius: 12px; text-align: center; box-shadow: 0 2px 10px rgba(0,0,0,.1); max-width: 360px; }
+  #gate .msg { color: #c0392b; font-size: 13px; margin-top: 12px; min-height: 18px; }
+  #toast { position: fixed; left: 50%; bottom: 30px; transform: translateX(-50%); background: #2d3e50; color: #fff; padding: 10px 18px; border-radius: 20px; font-size: 14px; opacity: 0; transition: opacity .2s; pointer-events: none; z-index: 20; }
+  #toast.show { opacity: 1; }
+  @media (max-width: 900px) { .form-grid { grid-template-columns: 1fr 1fr; } }
+</style>
+</head>
+<body>
+<div id="gate"><div class="box">
+  <h2 style="margin-top:0">🏠 이사 준비 견적 비교표</h2>
+  <p style="color:#666;font-size:14px">등록된 구글 계정으로 로그인해 주세요.</p>
+  <button class="btn-primary" id="btnLogin">구글로 로그인</button>
+  <div class="msg" id="gateMsg"></div>
+</div></div>
+
+<header>
+  <h1>🏠 이사 준비 견적 비교표</h1>
+  <span class="sync" id="syncState">연결 중…</span>
+  <span class="user" id="userEmail"></span>
+  <button class="btn-small btn-gray" id="btnLogout">로그아웃</button>
+</header>
+<main>
+
+  <div class="card">
+    <h2>새 항목 / 후보 추가</h2>
+    <div class="form-grid">
+      <div><label>구분</label>
+        <select id="fCat"><option>시공</option><option>구매</option><option>서비스</option><option>기타</option></select></div>
+      <div><label>항목 *</label><input id="fName" list="nameList" placeholder="예: 줄눈"></div>
+      <div><label>업체·제품 *</label><input id="fVendor" placeholder="예: A줄눈"></div>
+      <div><label>금액 (원)</label><input id="fPrice" placeholder="600000"></div>
+      <div><label>연락처</label><input id="fContact" placeholder="010-0000-0000" inputmode="tel"></div>
+      <div><label>링크</label><input id="fLink" placeholder="https://..."></div>
+      <div><label>비고</label><input id="fMemo" placeholder="예: 케라폭시, 욕실2+현관, AS 2년"></div>
+    </div>
+    <datalist id="nameList"></datalist>
+    <div class="actions"><button class="btn-primary" id="btnAdd">추가</button></div>
+  </div>
+
+  <div class="card">
+    <h2>요약</h2>
+    <div class="summary" id="summary"></div>
+    <div class="sel-title">선택한 후보</div>
+    <div id="selectedList"></div>
+  </div>
+
+  <div class="card">
+    <div class="toolbar">
+      <select id="filterCat"><option value="">전체 구분</option><option>시공</option><option>구매</option><option>서비스</option><option>기타</option></select>
+      <select id="filterStatus"><option value="">전체 상태</option><option value="wait">미결정만</option><option value="done">결정완료만</option></select>
+      <input id="search" placeholder="검색 (항목, 업체, 비고)">
+      <span style="flex:1"></span>
+      <button class="btn-gray" id="btnCsv">엑셀(CSV) 내보내기</button>
+      <button class="btn-gray" id="btnBackup">백업 저장</button>
+      <button class="btn-gray" id="btnRestore">백업 불러오기</button>
+      <input type="file" id="fileInput" accept=".json" style="display:none">
+    </div>
+    <div id="list"></div>
+  </div>
+
+</main>
+<div id="toast"></div>
+
+<script>
+const CATS = ['시공','구매','서비스','기타'];
+const NEW_ID = '__new__';
+const $ = id => document.getElementById(id);
+
+// ---------- 전화번호 / 링크 ----------
+function formatPhone(v) {
+  v = String(v ?? '');
+  if (/[^\d\-\s()+.]/.test(v)) return v;
+  const d = v.replace(/\D/g, '');
+  if (!d) return v.trim();
+  if (/^1[5-9]\d/.test(d)) return d.length <= 4 ? d : d.slice(0, 4) + '-' + d.slice(4, 8);
+  if (d[0] !== '0') return v;
+  const a = d.startsWith('02') ? 2 : /^050/.test(d) ? 4 : 3;
+  const area = d.slice(0, a), rest = d.slice(a, a + 8);
+  if (!rest) return area;
+  if (rest.length <= 3) return area + '-' + rest;
+  const mid = rest.length <= 7 ? 3 : 4;
+  return area + '-' + rest.slice(0, mid) + '-' + rest.slice(mid);
+}
+function isCallable(c) { return !/[^\d\-\s()+.]/.test(c) && c.replace(/\D/g, '').length >= 8; }
+function normalizeLink(l) {
+  l = String(l ?? '').trim();
+  if (!l) return '';
+  if (!/^[a-z][a-z0-9+.-]*:/i.test(l)) l = 'https://' + l;
+  return l;
+}
+function bindPhoneInput(el) {
+  el.addEventListener('input', () => { if (el.selectionStart === el.value.length) el.value = formatPhone(el.value); });
+  el.addEventListener('blur', () => el.value = formatPhone(el.value));
+}
+
+// ---------- 데이터 ----------
+function migrate(arr) {
+  return (arr || []).filter(Boolean).map(i => {
+    let contact = i.contact || '', link = i.link;
+    if (link === undefined) { link = ''; if (/^https?:\/\//.test(contact)) { link = contact; contact = ''; } }
+    return {
+      id: String(i.id || Date.now() + '' + Math.random()), selected: !!i.selected,
+      cat: i.cat || '기타', name: i.name || '', vendor: i.vendor || '', price: Number(i.price) || 0,
+      contact: formatPhone(contact), link: link || '', memo: i.memo || ''
+    };
+  });
+}
+let items = [];
+let editingId = null, addingName = null, dragName = null, pendingRemote = false;
+
+// 클라우드에서 데이터가 오면 호출됨 (아래 Firebase 부분에서)
+window.applyRemote = data => {
+  items = migrate(Array.isArray(data) ? data : (data ? Object.values(data) : []));
+  if (editingId) { pendingRemote = true; return; } // 입력 중이면 화면 갱신 미룸
+  render();
+};
+function persist() {
+  render();
+  if (window.cloudSave) window.cloudSave(items);
+  else alert('아직 서버에 연결되지 않았어요. 잠시 후 다시 시도해 주세요.');
+}
+
+function won(n) { return (Number(n) || 0).toLocaleString('ko-KR') + '원'; }
+function esc(s) { return String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+function parsePrice(v) { return Number(String(v).replace(/[^0-9]/g, '')) || 0; }
+function newId() { return Date.now() + '' + Math.random().toString().slice(2, 8); }
+
+let toastTimer;
+function toast(msg) {
+  const t = $('toast'); t.textContent = msg; t.classList.add('show');
+  clearTimeout(toastTimer); toastTimer = setTimeout(() => t.classList.remove('show'), 1500);
+}
+async function copyText(text) {
+  try { await navigator.clipboard.writeText(text); }
+  catch {
+    const ta = document.createElement('textarea'); ta.value = text;
+    document.body.appendChild(ta); ta.select(); document.execCommand('copy'); ta.remove();
+  }
+  toast('링크를 복사했어요');
+}
+document.addEventListener('click', e => { const b = e.target.closest('[data-copy]'); if (b) copyText(b.dataset.copy); });
+
+function contactCell(c) {
+  if (!c) return '';
+  return `<span class="phone">${esc(c)}</span>` +
+    (isCallable(c) ? `<a class="btn btn-small btn-call" href="tel:${c.replace(/\D/g, '')}">전화</a>` : '');
+}
+function linkCell(l) {
+  if (!l) return '';
+  if (!/^https?:\/\//i.test(l)) return esc(l);
+  return `<a class="btn btn-small btn-open" href="${esc(l)}" target="_blank" rel="noopener" title="${esc(l)}">열기</a>
+    <button class="btn-small btn-gray" data-copy="${esc(l)}">복사</button>`;
+}
+
+const COLS = `<colgroup><col style="width:46px"><col style="width:13%"><col style="width:140px"><col style="width:185px"><col style="width:115px"><col><col style="width:160px"></colgroup>`;
+
+function groupItems(list) {
+  const map = new Map();
+  list.forEach(it => { if (!map.has(it.name)) map.set(it.name, []); map.get(it.name).push(it); });
+  return map;
+}
+
+// ---------- 위쪽 입력칸으로 추가 ----------
+bindPhoneInput($('fContact'));
+$('btnAdd').onclick = () => {
+  const data = {
+    cat: $('fCat').value, name: $('fName').value.trim(), vendor: $('fVendor').value.trim(),
+    price: parsePrice($('fPrice').value), contact: formatPhone($('fContact').value.trim()),
+    link: normalizeLink($('fLink').value), memo: $('fMemo').value.trim()
+  };
+  if (!data.name || !data.vendor) { alert('항목이랑 업체·제품은 꼭 입력해주세요.'); return; }
+  const existing = items.find(i => i.name === data.name);
+  if (existing) data.cat = existing.cat;
+  items.push({ id: newId(), selected: false, ...data });
+  ['fVendor','fPrice','fContact','fLink','fMemo'].forEach(id => $(id).value = '');
+  $('fVendor').focus();
+  persist();
+};
+document.querySelectorAll('.form-grid input').forEach(el =>
+  el.addEventListener('keydown', e => { if (e.key === 'Enter') $('btnAdd').click(); }));
+
+// ---------- 표 안에서 수정 / 추가 ----------
+function startEdit(id) { editingId = id; addingName = null; render(); }
+function startAdd(name) { editingId = NEW_ID; addingName = name; render(); }
+function cancelEdit() { editingId = null; addingName = null; render(); }
+function saveEdit() {
+  const vendor = $('eVendor').value.trim();
+  if (!vendor) { alert('업체·제품은 비워둘 수 없어요.'); $('eVendor').focus(); return; }
+  const data = {
+    vendor, price: parsePrice($('ePrice').value), contact: formatPhone($('eContact').value.trim()),
+    link: normalizeLink($('eLink').value), memo: $('eMemo').value.trim()
+  };
+  if (editingId === NEW_ID) {
+    const group = items.filter(i => i.name === addingName);
+    if (!group.length) { alert('그 사이에 이 항목이 삭제됐어요.'); cancelEdit(); return; }
+    const lastIdx = items.lastIndexOf(group[group.length - 1]);
+    items.splice(lastIdx + 1, 0, { id: newId(), selected: false, cat: group[0].cat, name: addingName, ...data });
+  } else {
+    const it = items.find(i => i.id === editingId);
+    if (!it) { alert('그 사이에 이 후보가 삭제됐어요.'); cancelEdit(); return; }
+    Object.assign(it, data);
+  }
+  editingId = null; addingName = null;
+  persist();
+}
+function deleteItem(id) {
+  if (!confirm('이 후보를 삭제할까요?')) return;
+  items = items.filter(i => i.id !== id);
+  if (editingId === id) editingId = null;
+  persist();
+}
+function toggleSelect(id) {
+  const it = items.find(i => i.id === id); if (!it) return;
+  const willSelect = !it.selected;
+  items.forEach(i => { if (i.name === it.name) i.selected = false; });
+  it.selected = willSelect;
+  persist();
+}
+function unselect(id) { const it = items.find(i => i.id === id); if (it) { it.selected = false; persist(); } }
+
+function editRow(no, it) {
+  return `<tr class="editing">
+    <td>${no}</td>
+    <td><input id="eVendor" value="${esc(it.vendor)}" placeholder="업체·제품"></td>
+    <td><input id="ePrice" value="${it.price ? it.price.toLocaleString('ko-KR') : ''}" placeholder="금액" style="text-align:right"></td>
+    <td><input id="eContact" value="${esc(it.contact)}" placeholder="연락처" inputmode="tel"></td>
+    <td><input id="eLink" value="${esc(it.link)}" placeholder="링크"></td>
+    <td><input id="eMemo" value="${esc(it.memo)}" placeholder="비고"></td>
+    <td class="btns">
+      <button class="btn-small btn-primary" onclick="saveEdit()">저장</button>
+      <button class="btn-small btn-gray" onclick="cancelEdit()">취소</button>
+    </td></tr>`;
+}
+
+// ---------- 드래그로 항목 순서 변경 ----------
+function moveGroup(from, to, after) {
+  if (from === to) return;
+  const moving = items.filter(i => i.name === from);
+  const rest = items.filter(i => i.name !== from);
+  let idx;
+  if (after) {
+    idx = rest.length;
+    for (let k = rest.length - 1; k >= 0; k--) { if (rest[k].name === to) { idx = k + 1; break; } }
+  } else {
+    idx = rest.findIndex(i => i.name === to);
+    if (idx < 0) idx = 0;
+  }
+  rest.splice(idx, 0, ...moving);
+  items = rest;
+  persist();
+}
+function clearDrop() { document.querySelectorAll('.group').forEach(g => g.classList.remove('drop-before', 'drop-after')); }
+function bindDrag() {
+  document.querySelectorAll('.group').forEach(g => {
+    const head = g.querySelector('.group-head');
+    head.addEventListener('dragstart', e => {
+      dragName = g.dataset.name;
+      e.dataTransfer.effectAllowed = 'move';
+      e.dataTransfer.setData('text/plain', dragName);
+      e.dataTransfer.setDragImage(g, 30, 20);
+      setTimeout(() => g.classList.add('dragging'), 0);
+    });
+    head.addEventListener('dragend', () => { dragName = null; clearDrop(); g.classList.remove('dragging'); });
+    g.addEventListener('dragover', e => {
+      if (!dragName || g.dataset.name === dragName) return;
+      e.preventDefault();
+      const r = g.getBoundingClientRect();
+      clearDrop();
+      g.classList.add(e.clientY > r.top + r.height / 2 ? 'drop-after' : 'drop-before');
+    });
+    g.addEventListener('drop', e => {
+      e.preventDefault();
+      if (!dragName || g.dataset.name === dragName) return;
+      const after = g.classList.contains('drop-after');
+      const from = dragName; dragName = null;
+      moveGroup(from, g.dataset.name, after);
+    });
+  });
+}
+
+// ---------- 화면 그리기 ----------
+function render() {
+  pendingRemote = false;
+  $('nameList').innerHTML = [...new Set(items.map(i => i.name))].map(n => `<option value="${esc(n)}">`).join('');
+
+  const groups = groupItems(items);
+  const selected = items.filter(i => i.selected).sort((a, b) => CATS.indexOf(a.cat) - CATS.indexOf(b.cat));
+  const total = selected.reduce((s, i) => s + i.price, 0);
+  const byCat = {};
+  selected.forEach(i => byCat[i.cat] = (byCat[i.cat] || 0) + i.price);
+  const waitCount = [...groups.values()].filter(g => !g.some(i => i.selected)).length;
+  let html = `<div class="stat total"><div class="label">선택한 후보 총액</div><div class="value">${won(total)}</div></div>`;
+  CATS.forEach(c => { if (byCat[c]) html += `<div class="stat"><div class="label">${c}</div><div class="value">${won(byCat[c])}</div></div>`; });
+  html += `<div class="stat"><div class="label">미결정 항목</div><div class="value" style="color:${waitCount ? '#e74c3c' : '#27ae60'}">${waitCount}개 / 총 ${groups.size}개</div></div>`;
+  $('summary').innerHTML = html;
+
+  if (!selected.length) {
+    $('selectedList').innerHTML = `<div class="sel-empty">아직 선택한 후보가 없어요. 아래 목록에서 '선택'을 눌러보세요.</div>`;
+  } else {
+    let s = `<table class="sel-table"><colgroup><col style="width:150px"><col style="width:13%"><col style="width:120px"><col style="width:185px"><col><col style="width:90px"></colgroup>
+      <tr><th>항목</th><th>업체·제품</th><th class="price">금액</th><th>연락처</th><th>비고</th><th></th></tr>`;
+    selected.forEach(it => {
+      s += `<tr><td><span class="badge b-${esc(it.cat)}">${esc(it.cat)}</span>${esc(it.name)}</td>
+        <td>${esc(it.vendor)}</td><td class="price">${it.price ? won(it.price) : '-'}</td>
+        <td class="nowrap">${contactCell(it.contact)}</td>
+        <td class="memo">${esc(it.memo)}</td>
+        <td class="btns"><button class="btn-small btn-gray" onclick="unselect('${it.id}')">선택해제</button></td></tr>`;
+    });
+    $('selectedList').innerHTML = s + '</table>';
+  }
+
+  const fc = $('filterCat').value, fs = $('filterStatus').value, q = $('search').value.trim().toLowerCase();
+  let out = '';
+  groups.forEach((list, name) => {
+    const done = list.some(i => i.selected);
+    if (fc && !list.some(i => i.cat === fc)) return;
+    if (fs === 'wait' && done) return;
+    if (fs === 'done' && !done) return;
+    if (q && !list.some(i => [i.name, i.vendor, i.memo, i.contact, i.link].join(' ').toLowerCase().includes(q))) return;
+
+    const prices = list.map(i => i.price).filter(p => p > 0);
+    const min = prices.length ? Math.min(...prices) : null;
+    const isAddingHere = editingId === NEW_ID && addingName === name;
+    out += `<div class="group" data-name="${esc(name)}">
+      <div class="group-head" draggable="true" title="드래그해서 순서 변경">
+        <div><span class="drag-handle">⠿</span><span class="badge b-${esc(list[0].cat)}">${esc(list[0].cat)}</span><span class="title">${esc(name)}</span>
+          <span style="color:#888;font-size:13px"> · 후보 ${list.length}개${min !== null ? ' · 최저 ' + won(min) : ''}</span></div>
+        <div class="${done ? 'status-done' : 'status-wait'}">${done ? '✔ 결정완료' : '미결정'}</div>
+      </div>
+      <table>${COLS}<tr><th>후보</th><th>업체·제품</th><th class="price">금액</th><th>연락처</th><th>링크</th><th>비고</th><th></th></tr>`;
+    list.forEach((it, idx) => {
+      if (it.id === editingId) { out += editRow(idx + 1, it); return; }
+      const isMin = min !== null && it.price === min && prices.length > 1;
+      out += `<tr class="${it.selected ? 'selected' : ''}">
+        <td>${idx + 1}</td>
+        <td>${it.selected ? '⭐ ' : ''}${esc(it.vendor)}</td>
+        <td class="price">${isMin ? '<span class="cheap">최저</span>' : ''}${it.price ? won(it.price) : '-'}</td>
+        <td class="nowrap">${contactCell(it.contact)}</td>
+        <td class="nowrap">${linkCell(it.link)}</td>
+        <td class="memo">${esc(it.memo)}</td>
+        <td class="btns">
+          <button class="btn-small ${it.selected ? 'btn-primary' : 'btn-gray'}" onclick="toggleSelect('${it.id}')">${it.selected ? '선택됨' : '선택'}</button>
+          <button class="btn-small btn-gray" onclick="startEdit('${it.id}')">수정</button>
+          <button class="btn-small btn-red" onclick="deleteItem('${it.id}')">삭제</button>
+        </td></tr>`;
+    });
+    if (isAddingHere) out += editRow(list.length + 1, { vendor: '', price: 0, contact: '', link: '', memo: '' });
+    out += `</table>`;
+    if (!isAddingHere) out += `<div class="group-foot"><button class="add-row-btn" data-add="${esc(name)}">+ ${esc(name)} 후보 추가</button></div>`;
+    out += `</div>`;
+  });
+  $('list').innerHTML = out || `<div class="empty">${items.length ? '조건에 맞는 항목이 없어요.' : '아직 후보가 없어요. 위에서 추가해보세요!'}</div>`;
+
+  document.querySelectorAll('[data-add]').forEach(b => b.onclick = () => startAdd(b.dataset.add));
+  bindDrag();
+
+  if (editingId && $('eVendor')) {
+    bindPhoneInput($('eContact'));
+    ['eVendor','ePrice','eContact','eLink','eMemo'].forEach(id => $(id).addEventListener('keydown', e => {
+      if (e.key === 'Enter') saveEdit();
+      if (e.key === 'Escape') cancelEdit();
+    }));
+    (editingId === NEW_ID ? $('eVendor') : $('eMemo')).focus();
+  }
+}
+
+['filterCat','filterStatus'].forEach(id => $(id).onchange = render);
+$('search').oninput = render;
+
+// ---------- 내보내기 / 백업 ----------
+$('btnCsv').onclick = () => {
+  const rows = [['구분','항목','후보','업체·제품','금액','연락처','링크','비고','선택']];
+  groupItems(items).forEach((list, name) => list.forEach((it, idx) =>
+    rows.push([it.cat, name, idx + 1, it.vendor, it.price, it.contact, it.link, it.memo, it.selected ? 'O' : ''])));
+  const csv = rows.map(r => r.map(v => `"${String(v ?? '').replace(/"/g, '""')}"`).join(',')).join('\r\n');
+  download('\uFEFF' + csv, '이사준비_견적비교.csv', 'text/csv;charset=utf-8');
+};
+$('btnBackup').onclick = () => download(JSON.stringify(items, null, 2), `이사준비_백업_${new Date().toISOString().slice(0, 10)}.json`, 'application/json');
+$('btnRestore').onclick = () => $('fileInput').click();
+$('fileInput').onchange = e => {
+  const file = e.target.files[0]; if (!file) return;
+  const reader = new FileReader();
+  reader.onload = () => {
+    try {
+      const data = JSON.parse(reader.result);
+      if (!Array.isArray(data)) throw 0;
+      if (confirm(`백업에서 ${data.length}개 후보를 불러올까요? (지금 데이터는 덮어써지고, 상대방 화면에도 바로 반영돼요)`)) {
+        items = migrate(data); editingId = null; addingName = null; persist();
+      }
+    } catch { alert('백업 파일이 올바르지 않아요.'); }
+  };
+  reader.readAsText(file);
+  e.target.value = '';
+};
+function download(content, filename, type) {
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob([content], { type }));
+  a.download = filename; a.click();
+  URL.revokeObjectURL(a.href);
+}
+render();
+</script>
+
+<!-- ===================== Firebase 연결 부분 ===================== -->
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getAuth, GoogleAuthProvider, signInWithPopup, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import { getDatabase, ref, onValue, set } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+
+// ▼▼▼ Firebase 콘솔에서 복사한 값으로 바꾸세요 ▼▼▼
+  const firebaseConfig = {
+    apiKey: "AIzaSyAQuKcIizCroDDqmzAiNWeWSQSRK4Pe9PE",
+    authDomain: "project-3104745963085627802.firebaseapp.com",
+    databaseURL: "https://project-3104745963085627802-default-rtdb.asia-southeast1.firebasedatabase.app",
+    projectId: "project-3104745963085627802",
+    storageBucket: "project-3104745963085627802.firebasestorage.app",
+    messagingSenderId: "108011236398",
+    appId: "1:108011236398:web:b62baf245ee510d83783bf",
+    measurementId: "G-R16NRVJQRL"
+  };
+
+ // ▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲
+
+const el = id => document.getElementById(id);
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const dataRef = ref(getDatabase(app), 'planner/items');
+let unsubscribe = null;
+
+const showGate = msg => { el('gate').style.display = 'flex'; el('gateMsg').textContent = msg || ''; };
+const setSync = t => el('syncState').textContent = t;
+
+if (location.protocol === 'file:') showGate('이 버전은 내 PC 파일로는 로그인이 안 돼요. GitHub Pages 주소로 열어주세요.');
+
+el('btnLogin').onclick = () =>
+  signInWithPopup(auth, new GoogleAuthProvider()).catch(e => showGate('로그인 실패: ' + e.code));
+el('btnLogout').onclick = () => signOut(auth);
+
+onAuthStateChanged(auth, user => {
+  if (unsubscribe) { unsubscribe(); unsubscribe = null; }
+  window.cloudSave = null;
+  if (!user) { showGate(''); return; }
+  el('gateMsg').textContent = '불러오는 중…';
+  unsubscribe = onValue(dataRef, snap => {
+    el('gate').style.display = 'none';
+    el('userEmail').textContent = user.email;
+    window.cloudSave = data => {
+      setSync('저장 중…');
+      set(dataRef, data).then(() => setSync('✔ 저장됨')).catch(() => setSync('⚠ 저장 실패'));
+    };
+    setSync('✔ 동기화됨');
+    window.applyRemote(snap.val());
+  }, () => {
+    showGate(`${user.email} 계정은 접근 권한이 없어요. 등록된 계정으로 로그인해 주세요.`);
+    signOut(auth);
+  });
+});
+</script>
+</body>
+</html>
