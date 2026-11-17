@@ -8,7 +8,7 @@
   * { box-sizing: border-box; }
   body { font-family: "Malgun Gothic", "Apple SD Gothic Neo", sans-serif; margin: 0; background: #f4f5f7; color: #222; }
   header { background: #2d3e50; color: #fff; padding: 12px 24px; display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
-  header h1 { margin: 0; font-size: 20px; flex: 1; }
+  header h1 { margin: 0; font-size: 20px; flex: 1; white-space: nowrap; }
   header .user { font-size: 13px; opacity: .85; }
   header .sync { font-size: 12px; background: rgba(255,255,255,.15); padding: 3px 10px; border-radius: 10px; }
   main { max-width: 1200px; margin: 0 auto; padding: 20px; }
@@ -41,17 +41,21 @@
   .group-head { background: #f0f3f7; padding: 10px 12px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 6px; cursor: grab; user-select: none; }
   .group-head:active { cursor: grabbing; }
   .group-head .title { font-weight: bold; font-size: 15px; }
+  .head-right { display: flex; align-items: center; gap: 10px; }
+  .multi-toggle { display: inline-flex; align-items: center; gap: 4px; font-size: 12px; color: #555; background: #fff; border: 1px solid #d8dde3; padding: 3px 9px; border-radius: 12px; cursor: pointer; white-space: nowrap; }
+  .multi-toggle.on { border-color: #2d7ff9; color: #1a5fd0; background: #eef5ff; }
+  .multi-toggle input { width: auto; margin: 0; padding: 0; cursor: pointer; }
   .group-foot { border-top: 1px solid #eee; }
   .add-row-btn { width: 100%; background: none; color: #2d7ff9; font-size: 13px; padding: 8px 12px; border-radius: 0; text-align: left; }
   .add-row-btn:hover { background: #f3f8ff; }
   .drag-handle { color: #aab; font-size: 16px; margin-right: 8px; }
   .badge { display: inline-block; font-size: 11px; padding: 2px 8px; border-radius: 10px; margin-right: 6px; color: #fff; white-space: nowrap; }
   .b-시공 { background: #e67e22; } .b-구매 { background: #27ae60; } .b-서비스 { background: #8e44ad; } .b-기타 { background: #7f8c8d; }
-  .status-done { color: #27ae60; font-size: 13px; font-weight: bold; }
-  .status-wait { color: #e74c3c; font-size: 13px; font-weight: bold; }
+  .status-done { color: #27ae60; font-size: 13px; font-weight: bold; white-space: nowrap; }
+  .status-wait { color: #e74c3c; font-size: 13px; font-weight: bold; white-space: nowrap; }
   table { width: 100%; border-collapse: collapse; font-size: 14px; table-layout: fixed; }
   th, td { padding: 8px 10px; border-top: 1px solid #eee; text-align: left; vertical-align: middle; overflow-wrap: anywhere; }
-  th { font-size: 12px; color: #777; font-weight: normal; background: #fafbfc; }
+  th { font-size: 12px; color: #777; font-weight: normal; background: #fafbfc; white-space: nowrap; }
   td.price, th.price { text-align: right; white-space: nowrap; }
   td.memo { white-space: pre-wrap; color: #444; }
   td.btns, td.nowrap { white-space: nowrap; }
@@ -63,29 +67,24 @@
   .cheap { display: inline-block; font-size: 11px; color: #1e8449; background: #e3f6ea; padding: 1px 6px; border-radius: 8px; margin-right: 6px; }
   .empty { text-align: center; color: #999; padding: 30px; }
   .sel-table td { background: #f8fbff; }
+  .sel-table tr.sel-first td { border-top: 1px solid #dfe5ec; }
+  .sel-table tr.sel-cont td { border-top: 1px dashed #e6eaf0; }
+  .sel-table tr.sel-cont td:first-child { border-top: none; }
+  .sel-count { color: #888; font-size: 12px; margin-left: 4px; }
   #gate { position: fixed; inset: 0; background: #f4f5f7; display: flex; align-items: center; justify-content: center; z-index: 10; }
   #gate .box { background: #fff; padding: 32px; border-radius: 12px; text-align: center; box-shadow: 0 2px 10px rgba(0,0,0,.1); max-width: 360px; }
   #gate .msg { color: #c0392b; font-size: 13px; margin-top: 12px; min-height: 18px; }
   #toast { position: fixed; left: 50%; bottom: 30px; transform: translateX(-50%); background: #2d3e50; color: #fff; padding: 10px 18px; border-radius: 20px; font-size: 14px; opacity: 0; transition: opacity .2s; pointer-events: none; z-index: 20; }
   #toast.show { opacity: 1; }
+
+  /* ===== 모바일 보정 (표 안에서 손가락으로 가로 스크롤) ===== */
+  .mx-scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; overscroll-behavior-x: contain; }
+  .mx-scroll > table { min-width: 860px; }
   @media (max-width: 900px) { .form-grid { grid-template-columns: 1fr 1fr; } }
-
-/* ===== 모바일 보정 ===== */
-h1 { white-space: nowrap; }
-.mx-scroll {
-  overflow-x: auto;
-  -webkit-overflow-scrolling: touch;
-  overscroll-behavior-x: contain;
-}
-.mx-scroll > table { min-width: 860px; }
-.mx-scroll th { white-space: nowrap; }
-@media (max-width: 700px) {
-  h1 { font-size: 20px !important; }
-  .mx-head { flex-wrap: wrap !important; row-gap: 10px; }
-  .mx-head > h1 { flex: 1 0 100% !important; }
-}
-
-
+  @media (max-width: 700px) {
+    header { row-gap: 10px; }
+    header h1 { flex: 1 0 100%; }
+  }
 </style>
 </head>
 <body>
@@ -182,19 +181,18 @@ function migrate(arr) {
     let contact = i.contact || '', link = i.link;
     if (link === undefined) { link = ''; if (/^https?:\/\//.test(contact)) { link = contact; contact = ''; } }
     return {
-      id: String(i.id || Date.now() + '' + Math.random()), selected: !!i.selected,
+      id: String(i.id || Date.now() + '' + Math.random()), selected: !!i.selected, multi: !!i.multi,
       cat: i.cat || '기타', name: i.name || '', vendor: i.vendor || '', price: Number(i.price) || 0,
       contact: formatPhone(contact), link: link || '', memo: i.memo || ''
     };
   });
 }
 let items = [];
-let editingId = null, addingName = null, dragName = null, pendingRemote = false;
+let editingId = null, addingName = null, dragName = null, pendingRemote = false, noDrag = false;
 
-// 클라우드에서 데이터가 오면 호출됨 (아래 Firebase 부분에서)
 window.applyRemote = data => {
   items = migrate(Array.isArray(data) ? data : (data ? Object.values(data) : []));
-  if (editingId) { pendingRemote = true; return; } // 입력 중이면 화면 갱신 미룸
+  if (editingId) { pendingRemote = true; return; }
   render();
 };
 function persist() {
@@ -207,6 +205,7 @@ function won(n) { return (Number(n) || 0).toLocaleString('ko-KR') + '원'; }
 function esc(s) { return String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
 function parsePrice(v) { return Number(String(v).replace(/[^0-9]/g, '')) || 0; }
 function newId() { return Date.now() + '' + Math.random().toString().slice(2, 8); }
+function isMulti(name) { return items.some(i => i.name === name && i.multi); }
 
 let toastTimer;
 function toast(msg) {
@@ -222,6 +221,7 @@ async function copyText(text) {
   toast('링크를 복사했어요');
 }
 document.addEventListener('click', e => { const b = e.target.closest('[data-copy]'); if (b) copyText(b.dataset.copy); });
+['pointerup', 'pointercancel'].forEach(ev => document.addEventListener(ev, () => setTimeout(() => noDrag = false, 0)));
 
 function contactCell(c) {
   if (!c) return '';
@@ -254,7 +254,7 @@ $('btnAdd').onclick = () => {
   if (!data.name || !data.vendor) { alert('항목이랑 업체·제품은 꼭 입력해주세요.'); return; }
   const existing = items.find(i => i.name === data.name);
   if (existing) data.cat = existing.cat;
-  items.push({ id: newId(), selected: false, ...data });
+  items.push({ id: newId(), selected: false, multi: isMulti(data.name), ...data });
   ['fVendor','fPrice','fContact','fLink','fMemo'].forEach(id => $(id).value = '');
   $('fVendor').focus();
   persist();
@@ -277,7 +277,7 @@ function saveEdit() {
     const group = items.filter(i => i.name === addingName);
     if (!group.length) { alert('그 사이에 이 항목이 삭제됐어요.'); cancelEdit(); return; }
     const lastIdx = items.lastIndexOf(group[group.length - 1]);
-    items.splice(lastIdx + 1, 0, { id: newId(), selected: false, cat: group[0].cat, name: addingName, ...data });
+    items.splice(lastIdx + 1, 0, { id: newId(), selected: false, multi: isMulti(addingName), cat: group[0].cat, name: addingName, ...data });
   } else {
     const it = items.find(i => i.id === editingId);
     if (!it) { alert('그 사이에 이 후보가 삭제됐어요.'); cancelEdit(); return; }
@@ -295,11 +295,26 @@ function deleteItem(id) {
 function toggleSelect(id) {
   const it = items.find(i => i.id === id); if (!it) return;
   const willSelect = !it.selected;
-  items.forEach(i => { if (i.name === it.name) i.selected = false; });
+  if (!isMulti(it.name)) items.forEach(i => { if (i.name === it.name) i.selected = false; });
   it.selected = willSelect;
   persist();
 }
 function unselect(id) { const it = items.find(i => i.id === id); if (it) { it.selected = false; persist(); } }
+
+// 중복선택 켜기/끄기
+function toggleMulti(name, on) {
+  const list = items.filter(i => i.name === name);
+  if (!list.length) return;
+  if (!on) {
+    const sel = list.filter(i => i.selected);
+    if (sel.length > 1) {
+      if (!confirm(`'${name}'에 선택된 후보가 ${sel.length}개예요.\n맨 위 하나만 남기고 나머지는 선택해제할까요?`)) { render(); return; }
+      sel.slice(1).forEach(i => i.selected = false);
+    }
+  }
+  list.forEach(i => i.multi = on);
+  persist();
+}
 
 function editRow(no, it) {
   return `<tr class="editing">
@@ -337,6 +352,7 @@ function bindDrag() {
   document.querySelectorAll('.group').forEach(g => {
     const head = g.querySelector('.group-head');
     head.addEventListener('dragstart', e => {
+      if (noDrag) { e.preventDefault(); noDrag = false; return; }
       dragName = g.dataset.name;
       e.dataTransfer.effectAllowed = 'move';
       e.dataTransfer.setData('text/plain', dragName);
@@ -367,7 +383,15 @@ function render() {
   $('nameList').innerHTML = [...new Set(items.map(i => i.name))].map(n => `<option value="${esc(n)}">`).join('');
 
   const groups = groupItems(items);
-  const selected = items.filter(i => i.selected).sort((a, b) => CATS.indexOf(a.cat) - CATS.indexOf(b.cat));
+  const groupOrder = new Map([...groups.keys()].map((n, i) => [n, i]));
+  const posInGroup = new Map();
+  groups.forEach(list => list.forEach((it, i) => posInGroup.set(it.id, i)));
+
+  // 선택 목록: 구분 순서 → 항목(드래그) 순서 → 후보 번호 순 → 같은 항목끼리 붙음
+  const selected = items.filter(i => i.selected).sort((a, b) =>
+    (CATS.indexOf(a.cat) - CATS.indexOf(b.cat)) ||
+    (groupOrder.get(a.name) - groupOrder.get(b.name)) ||
+    (posInGroup.get(a.id) - posInGroup.get(b.id)));
   const total = selected.reduce((s, i) => s + i.price, 0);
   const byCat = {};
   selected.forEach(i => byCat[i.cat] = (byCat[i.cat] || 0) + i.price);
@@ -380,22 +404,31 @@ function render() {
   if (!selected.length) {
     $('selectedList').innerHTML = `<div class="sel-empty">아직 선택한 후보가 없어요. 아래 목록에서 '선택'을 눌러보세요.</div>`;
   } else {
-    let s = `<table class="sel-table"><colgroup><col style="width:150px"><col style="width:13%"><col style="width:120px"><col style="width:185px"><col><col style="width:90px"></colgroup>
+    const selCount = {};
+    selected.forEach(i => selCount[i.name] = (selCount[i.name] || 0) + 1);
+    let s = `<div class="mx-scroll"><table class="sel-table"><colgroup><col style="width:170px"><col style="width:13%"><col style="width:120px"><col style="width:185px"><col><col style="width:90px"></colgroup>
       <tr><th>항목</th><th>업체·제품</th><th class="price">금액</th><th>연락처</th><th>비고</th><th></th></tr>`;
+    let prev = null;
     selected.forEach(it => {
-      s += `<tr><td><span class="badge b-${esc(it.cat)}">${esc(it.cat)}</span>${esc(it.name)}</td>
+      const first = it.name !== prev; prev = it.name;
+      const nameCell = first
+        ? `<span class="badge b-${esc(it.cat)}">${esc(it.cat)}</span>${esc(it.name)}${selCount[it.name] > 1 ? `<span class="sel-count">${selCount[it.name]}개</span>` : ''}`
+        : '';
+      s += `<tr class="${first ? 'sel-first' : 'sel-cont'}"><td>${nameCell}</td>
         <td>${esc(it.vendor)}</td><td class="price">${it.price ? won(it.price) : '-'}</td>
         <td class="nowrap">${contactCell(it.contact)}</td>
         <td class="memo">${esc(it.memo)}</td>
         <td class="btns"><button class="btn-small btn-gray" onclick="unselect('${it.id}')">선택해제</button></td></tr>`;
     });
-    $('selectedList').innerHTML = s + '</table>';
+    $('selectedList').innerHTML = s + '</table></div>';
   }
 
   const fc = $('filterCat').value, fs = $('filterStatus').value, q = $('search').value.trim().toLowerCase();
   let out = '';
   groups.forEach((list, name) => {
-    const done = list.some(i => i.selected);
+    const selN = list.filter(i => i.selected).length;
+    const done = selN > 0;
+    const multi = list.some(i => i.multi);
     if (fc && !list.some(i => i.cat === fc)) return;
     if (fs === 'wait' && done) return;
     if (fs === 'done' && !done) return;
@@ -404,16 +437,23 @@ function render() {
     const prices = list.map(i => i.price).filter(p => p > 0);
     const min = prices.length ? Math.min(...prices) : null;
     const isAddingHere = editingId === NEW_ID && addingName === name;
+    const statusText = selN === 0 ? '미결정' : selN === 1 ? '✔ 결정완료' : `✔ 선택 ${selN}개`;
     out += `<div class="group" data-name="${esc(name)}">
       <div class="group-head" draggable="true" title="드래그해서 순서 변경">
         <div><span class="drag-handle">⠿</span><span class="badge b-${esc(list[0].cat)}">${esc(list[0].cat)}</span><span class="title">${esc(name)}</span>
           <span style="color:#888;font-size:13px"> · 후보 ${list.length}개${min !== null ? ' · 최저 ' + won(min) : ''}</span></div>
-        <div class="${done ? 'status-done' : 'status-wait'}">${done ? '✔ 결정완료' : '미결정'}</div>
+        <div class="head-right">
+          <div class="${done ? 'status-done' : 'status-wait'}">${statusText}</div>
+          <label class="multi-toggle ${multi ? 'on' : ''}" title="여러 후보를 함께 선택할 수 있어요 (예: 방마다 다른 커튼)">
+            <input type="checkbox" data-multi="${esc(name)}" ${multi ? 'checked' : ''}> 중복선택
+          </label>
+        </div>
       </div>
-      <table>${COLS}<tr><th>후보</th><th>업체·제품</th><th class="price">금액</th><th>연락처</th><th>링크</th><th>비고</th><th></th></tr>`;
+      <div class="mx-scroll"><table>${COLS}<tr><th>후보</th><th>업체·제품</th><th class="price">금액</th><th>연락처</th><th>링크</th><th>비고</th><th></th></tr>`;
     list.forEach((it, idx) => {
       if (it.id === editingId) { out += editRow(idx + 1, it); return; }
       const isMin = min !== null && it.price === min && prices.length > 1;
+      const selLabel = multi ? (it.selected ? '☑ 선택됨' : '☐ 선택') : (it.selected ? '선택됨' : '선택');
       out += `<tr class="${it.selected ? 'selected' : ''}">
         <td>${idx + 1}</td>
         <td>${it.selected ? '⭐ ' : ''}${esc(it.vendor)}</td>
@@ -422,19 +462,21 @@ function render() {
         <td class="nowrap">${linkCell(it.link)}</td>
         <td class="memo">${esc(it.memo)}</td>
         <td class="btns">
-          <button class="btn-small ${it.selected ? 'btn-primary' : 'btn-gray'}" onclick="toggleSelect('${it.id}')">${it.selected ? '선택됨' : '선택'}</button>
+          <button class="btn-small ${it.selected ? 'btn-primary' : 'btn-gray'}" onclick="toggleSelect('${it.id}')">${selLabel}</button>
           <button class="btn-small btn-gray" onclick="startEdit('${it.id}')">수정</button>
           <button class="btn-small btn-red" onclick="deleteItem('${it.id}')">삭제</button>
         </td></tr>`;
     });
     if (isAddingHere) out += editRow(list.length + 1, { vendor: '', price: 0, contact: '', link: '', memo: '' });
-    out += `</table>`;
+    out += `</table></div>`;
     if (!isAddingHere) out += `<div class="group-foot"><button class="add-row-btn" data-add="${esc(name)}">+ ${esc(name)} 후보 추가</button></div>`;
     out += `</div>`;
   });
   $('list').innerHTML = out || `<div class="empty">${items.length ? '조건에 맞는 항목이 없어요.' : '아직 후보가 없어요. 위에서 추가해보세요!'}</div>`;
 
   document.querySelectorAll('[data-add]').forEach(b => b.onclick = () => startAdd(b.dataset.add));
+  document.querySelectorAll('[data-multi]').forEach(cb => cb.onchange = () => toggleMulti(cb.dataset.multi, cb.checked));
+  document.querySelectorAll('.multi-toggle').forEach(l => l.addEventListener('pointerdown', () => noDrag = true));
   bindDrag();
 
   if (editingId && $('eVendor')) {
@@ -490,19 +532,16 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/fireba
 import { getAuth, GoogleAuthProvider, signInWithPopup, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 import { getDatabase, ref, onValue, set } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
 
-// ▼▼▼ Firebase 콘솔에서 복사한 값으로 바꾸세요 ▼▼▼
-  const firebaseConfig = {
-    apiKey: "AIzaSyAQuKcIizCroDDqmzAiNWeWSQSRK4Pe9PE",
-    authDomain: "project-3104745963085627802.firebaseapp.com",
-    databaseURL: "https://project-3104745963085627802-default-rtdb.asia-southeast1.firebasedatabase.app",
-    projectId: "project-3104745963085627802",
-    storageBucket: "project-3104745963085627802.firebasestorage.app",
-    messagingSenderId: "108011236398",
-    appId: "1:108011236398:web:b62baf245ee510d83783bf",
-    measurementId: "G-R16NRVJQRL"
-  };
-
- // ▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲
+const firebaseConfig = {
+  apiKey: "AIzaSyAQuKcIizCroDDqmzAiNWeWSQSRK4Pe9PE",
+  authDomain: "project-3104745963085627802.firebaseapp.com",
+  databaseURL: "https://project-3104745963085627802-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId: "project-3104745963085627802",
+  storageBucket: "project-3104745963085627802.firebasestorage.app",
+  messagingSenderId: "108011236398",
+  appId: "1:108011236398:web:b62baf245ee510d83783bf",
+  measurementId: "G-R16NRVJQRL"
+};
 
 const el = id => document.getElementById(id);
 const app = initializeApp(firebaseConfig);
@@ -539,25 +578,5 @@ onAuthStateChanged(auth, user => {
   });
 });
 </script>
-
-<script>
-(function () {
-  function fixMobile() {
-    var h1 = document.querySelector('h1');
-    if (h1 && h1.parentElement) h1.parentElement.classList.add('mx-head');
-    document.querySelectorAll('table').forEach(function (t) {
-      if (t.parentElement.classList.contains('mx-scroll')) return;
-      var w = document.createElement('div');
-      w.className = 'mx-scroll';
-      t.parentNode.insertBefore(w, t);
-      w.appendChild(t);
-    });
-  }
-  fixMobile();
-  new MutationObserver(fixMobile).observe(document.body, { childList: true, subtree: true });
-})();
-</script>
-
-
 </body>
 </html>
