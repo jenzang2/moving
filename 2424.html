@@ -21,7 +21,7 @@
   .form-grid .rent-opt { display: inline-flex; align-items: center; gap: 3px; margin: 0 0 0 6px; color: #1a5fd0; cursor: pointer; }
   input, select { width: 100%; padding: 7px 8px; border: 1px solid #ccc; border-radius: 6px; font-size: 1rem; font-family: inherit; }
   input[type=checkbox] { width: auto; padding: 0; margin: 0; cursor: pointer; }
-  input.rent-cb { width: 15px; height: 15px; vertical-align: middle; }
+  input.rent-cb { width: 18px; height: 18px; vertical-align: middle; accent-color: #2d7ff9; }
   button, .btn { padding: 7px 13px; border: none; border-radius: 6px; cursor: pointer; font-size: 1rem; font-family: inherit; text-decoration: none; display: inline-block; }
   .btn-primary { background: #2d7ff9; color: #fff; }
   .btn-gray { background: #e3e6ea; color: #333; }
@@ -59,7 +59,7 @@
   .rent-tag { display: inline-block; font-size: .8rem; color: #1a5fd0; background: #e8f0fe; padding: 1px 6px; border-radius: 8px; margin-right: 6px; }
   .rent-chip { display: inline-flex; align-items: center; gap: 3px; font-size: .8rem; padding: 1px 7px; border: 1px solid #d8dde3; border-radius: 10px; color: #888; background: #fff; cursor: pointer; vertical-align: middle; white-space: nowrap; }
   .rent-chip.on { border-color: #2d7ff9; color: #1a5fd0; background: #e8f0fe; }
-  .rent-chip input { width: 13px; height: 13px; }
+  .rent-chip input { width: 15px; height: 15px; accent-color: #2d7ff9; }
   .price-edit { display: flex; align-items: center; gap: 4px; }
   .price-edit input:not([type=checkbox]) { flex: 1; min-width: 0; }
   .phone { margin-right: 6px; }
@@ -75,17 +75,22 @@
   td.btns, td.nowrap { white-space: nowrap; }
   td.btns { text-align: right; }
   td.vendor { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  td.no, th.no { color: #999; text-align: center; padding-left: 4px; padding-right: 4px; }
+  td.no, th.no { color: #999; text-align: center; padding-left: 2px; padding-right: 2px; }
   td.star, th.star { text-align: center; padding-left: 0; padding-right: 0; color: #f5a623; }
   td.rentc, th.rentc { text-align: center; padding-left: 0; padding-right: 0; }
   /* 세로선 (연한 회색) */
   .qt th, .qt td, .sel-table th, .sel-table td { border-left: 1px solid #e5e7eb; }
   .qt th:first-child, .qt td:first-child, .sel-table th:first-child, .sel-table td:first-child { border-left: none; }
+  /* 별 칸과 업체 칸 사이는 선 없음 */
+  .qt td.star + td, .qt th.star + th { border-left: none; padding-left: 2px; }
+  /* 렌탈 체크된 칸 강조 */
+  .qt td.rentc.on { background: #dbe8ff; }
   .qt thead th { position: sticky; top: 0; z-index: 2; border-bottom: 1px solid #e3e6ea; }
   .qt tr.ghead td { background: #f0f3f7; border-top: 10px solid #fff; padding: 8px 12px; cursor: grab; user-select: none; }
   .qt tr.ghead:active td { cursor: grabbing; }
   .qt tr.addrow td { padding: 0; }
   .qt tr.selected td { background: #eaf3ff; }
+  .qt tr.selected td.rentc.on { background: #cfe0ff; }
   .qt tr.editing td { background: #fffbe6; }
   .qt tr.editing input:not([type=checkbox]) { padding: 5px 6px; font-size: .92rem; }
   tbody.group.dragging { opacity: .35; }
@@ -106,13 +111,13 @@
   .citem.selected { background: #eaf3ff; }
   .citem.editing { background: #fffbe6; }
   .c1 { display: flex; align-items: center; gap: 6px; }
-  .cno { color: #999; width: 1.2rem; flex: none; text-align: center; }
-  .cstar { width: 1rem; flex: none; text-align: center; color: #f5a623; }
+  .cno { color: #999; width: 1rem; flex: none; text-align: center; }
+  .cstar { width: .9rem; flex: none; text-align: center; color: #f5a623; }
   .cv { flex: 1; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-weight: bold; }
   .crent { flex: none; }
   .cp { flex: none; white-space: nowrap; min-width: 8.5rem; text-align: right; }
-  .cmemo { color: #666; font-size: .92rem; margin: 4px 0 0 3.2rem; white-space: pre-wrap; overflow-wrap: anywhere; }
-  .c2 { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin: 6px 0 0 3.2rem; }
+  .cmemo { color: #666; font-size: .92rem; margin: 4px 0 0 2.8rem; white-space: pre-wrap; overflow-wrap: anywhere; }
+  .c2 { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin: 6px 0 0 2.8rem; }
   .cextra { display: flex; flex-wrap: wrap; align-items: center; gap: 4px; }
   .cbtns { margin-left: auto; display: flex; gap: 4px; }
   .egrid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
@@ -503,11 +508,11 @@ function headHTML(name, list, g) {
       </label>
     </div></div>`;
 }
-// 금액 (최저 배지 + 금액) — 렌탈 체크는 따로 그림
+// 금액 (최저 배지 + 금액)
 function priceCell(it, g) {
   return (isMinOf(it, g) ? '<span class="cheap">최저</span>' : '') + priceText(it);
 }
-// PC 표용 렌탈 체크박스 (렌탈 칸 가운데)
+// PC 표용 렌탈 체크박스
 function rentBox(it) {
   return `<input type="checkbox" class="rent-cb" data-rent="${it.id}" ${it.rental ? 'checked' : ''} title="렌탈이면 체크 (금액은 월 금액)">`;
 }
@@ -545,7 +550,7 @@ function editRow(no, it, buy) {
 }
 function tableHTML(vis) {
   let h = `<table class="qt"><colgroup>
-      <col style="width:3rem"><col style="width:1.8rem"><col style="width:var(--vw)"><col style="width:3.5rem">
+      <col style="width:2.4rem"><col style="width:1.3rem"><col style="width:var(--vw)"><col style="width:3.5rem">
       <col style="width:11rem"><col style="width:12.5rem"><col style="width:8rem"><col><col style="width:12.5rem">
     </colgroup>
     <thead><tr><th class="no">후보</th><th class="star" title="선택 표시"></th><th>업체·제품</th><th class="rentc">렌탈</th><th class="price">금액</th><th>연락처</th><th>링크</th><th>비고</th><th></th></tr></thead>`;
@@ -559,7 +564,7 @@ function tableHTML(vis) {
         <td class="no">${idx + 1}</td>
         <td class="star">${it.selected ? '★' : ''}</td>
         <td class="vendor" title="${esc(it.vendor)}">${esc(it.vendor)}</td>
-        <td class="rentc">${g.buy ? rentBox(it) : ''}</td>
+        <td class="rentc ${g.buy && it.rental ? 'on' : ''}">${g.buy ? rentBox(it) : ''}</td>
         <td class="price">${priceCell(it, g)}</td>
         <td class="nowrap">${contactCell(it.contact)}</td>
         <td class="nowrap">${linkCell(it.link)}</td>
