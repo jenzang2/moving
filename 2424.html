@@ -39,47 +39,82 @@
   .sel-empty { font-size: .92rem; color: #aaa; padding: 10px 0; }
   .toolbar { display: flex; gap: 8px; margin-bottom: 12px; flex-wrap: wrap; }
   .toolbar select, .toolbar input { width: auto; }
-  .group { border: 1px solid #e3e6ea; border-radius: 8px; margin-bottom: 12px; overflow: hidden; transition: opacity .15s; }
-  .group.dragging { opacity: .35; }
-  .group.drop-before { box-shadow: 0 -4px 0 #2d7ff9; }
-  .group.drop-after { box-shadow: 0 4px 0 #2d7ff9; }
-  .group-head { background: #f0f3f7; padding: 9px 12px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 6px; cursor: grab; user-select: none; }
-  .group-head:active { cursor: grabbing; }
-  .group-head .title { font-weight: bold; font-size: 1.08rem; }
-  .group-head .meta { color: #888; font-size: .92rem; }
-  .head-right { display: flex; align-items: center; gap: 10px; }
-  .multi-toggle { display: inline-flex; align-items: center; gap: 4px; font-size: .85rem; color: #555; background: #fff; border: 1px solid #d8dde3; padding: 3px 9px; border-radius: 12px; cursor: pointer; white-space: nowrap; }
-  .multi-toggle.on { border-color: #2d7ff9; color: #1a5fd0; background: #eef5ff; }
-  .group-foot { border-top: 1px solid #eee; }
-  .add-row-btn { width: 100%; background: none; color: #2d7ff9; font-size: .92rem; padding: 7px 12px; border-radius: 0; text-align: left; }
-  .add-row-btn:hover { background: #f3f8ff; }
+
   .drag-handle { color: #aab; font-size: 1.15rem; margin-right: 8px; }
   .badge { display: inline-block; font-size: .8rem; padding: 2px 8px; border-radius: 10px; margin-right: 6px; color: #fff; white-space: nowrap; }
   .b-시공 { background: #e67e22; } .b-구매 { background: #27ae60; } .b-서비스 { background: #8e44ad; } .b-기타 { background: #7f8c8d; }
   .status-done { color: #27ae60; font-size: .92rem; font-weight: bold; white-space: nowrap; }
   .status-wait { color: #e74c3c; font-size: .92rem; font-weight: bold; white-space: nowrap; }
+  .title { font-weight: bold; font-size: 1.08rem; }
+  .meta { color: #888; font-size: .92rem; }
+  .head-right { display: flex; align-items: center; gap: 10px; }
+  .multi-toggle { display: inline-flex; align-items: center; gap: 4px; font-size: .85rem; color: #555; background: #fff; border: 1px solid #d8dde3; padding: 3px 9px; border-radius: 12px; cursor: pointer; white-space: nowrap; }
+  .multi-toggle.on { border-color: #2d7ff9; color: #1a5fd0; background: #eef5ff; }
+  .head-in { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 6px; }
+  .add-row-btn { width: 100%; background: none; color: #2d7ff9; font-size: .92rem; padding: 7px 12px; border-radius: 0; text-align: left; }
+  .add-row-btn:hover { background: #f3f8ff; }
+
+  .cheap { display: inline-block; font-size: .8rem; color: #1e8449; background: #e3f6ea; padding: 1px 6px; border-radius: 8px; margin-right: 6px; }
+  .rent-tag { display: inline-block; font-size: .8rem; color: #1a5fd0; background: #e8f0fe; padding: 1px 6px; border-radius: 8px; margin-right: 6px; }
+  .rent-chip { display: inline-flex; align-items: center; gap: 3px; font-size: .8rem; padding: 1px 7px; border: 1px solid #d8dde3; border-radius: 10px; color: #888; background: #fff; margin-right: 6px; cursor: pointer; vertical-align: middle; white-space: nowrap; }
+  .rent-chip.on { border-color: #2d7ff9; color: #1a5fd0; background: #e8f0fe; }
+  .rent-chip input { width: 13px; height: 13px; }
+  .price-edit { display: flex; align-items: center; gap: 4px; }
+  .price-edit input:not([type=checkbox]) { flex: 1; min-width: 0; }
+  .phone { margin-right: 6px; }
+  .empty { text-align: center; color: #999; padding: 30px; }
+
+  /* ===== PC: 한 표로 합친 보기 ===== */
   table { width: 100%; border-collapse: collapse; font-size: 1rem; table-layout: fixed; }
-  th, td { padding: 7px 9px; border-top: 1px solid #eee; text-align: left; vertical-align: middle; overflow-wrap: anywhere; }
+  th, td { padding: 7px 9px; text-align: left; vertical-align: middle; overflow-wrap: anywhere; }
   th { font-size: .85rem; color: #777; font-weight: normal; background: #fafbfc; white-space: nowrap; }
+  td { border-top: 1px solid #eee; }
   td.price, th.price { text-align: right; white-space: nowrap; }
   td.memo { white-space: pre-wrap; color: #444; }
   td.btns, td.nowrap { white-space: nowrap; }
   td.btns { text-align: right; }
   td.vendor { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  td.ctr, th.ctr { text-align: center; }
-  .phone { margin-right: 6px; }
-  tr.selected { background: #eaf3ff; }
-  tr.editing { background: #fffbe6; }
-  tr.editing input:not([type=checkbox]) { padding: 5px 6px; font-size: .92rem; }
-  .rent-cb { width: 17px !important; height: 17px; }
-  .cheap { display: inline-block; font-size: .8rem; color: #1e8449; background: #e3f6ea; padding: 1px 6px; border-radius: 8px; margin-right: 6px; }
-  .rent-tag { display: inline-block; font-size: .8rem; color: #1a5fd0; background: #e8f0fe; padding: 1px 6px; border-radius: 8px; margin-right: 6px; }
-  .empty { text-align: center; color: #999; padding: 30px; }
+  td.no { color: #999; }
+  .qt thead th { position: sticky; top: 0; z-index: 2; border-bottom: 1px solid #e3e6ea; }
+  .qt tr.ghead td { background: #f0f3f7; border-top: 10px solid #fff; padding: 8px 12px; cursor: grab; user-select: none; }
+  .qt tr.ghead:active td { cursor: grabbing; }
+  .qt tr.addrow td { padding: 0; }
+  .qt tr.selected td { background: #eaf3ff; }
+  .qt tr.editing td { background: #fffbe6; }
+  .qt tr.editing input:not([type=checkbox]) { padding: 5px 6px; font-size: .92rem; }
+  tbody.group.dragging { opacity: .35; }
+  tbody.group.drop-before tr.ghead td { box-shadow: inset 0 4px 0 #2d7ff9; }
+  tbody.group.drop-after tr:last-child td { box-shadow: inset 0 -4px 0 #2d7ff9; }
   .sel-table td { background: #f8fbff; }
-  .sel-table tr.sel-first td { border-top: 1px solid #dfe5ec; }
   .sel-table tr.sel-cont td { border-top: 1px dashed #e6eaf0; }
   .sel-table tr.sel-cont td:first-child { border-top: none; }
   .sel-count { color: #888; font-size: .85rem; margin-left: 4px; }
+
+  /* ===== 폰: 카드형 보기 ===== */
+  .cgroup { border: 1px solid #e3e6ea; border-radius: 8px; margin-bottom: 10px; overflow: hidden; }
+  .cgroup.dragging { opacity: .35; }
+  .cgroup.drop-before { box-shadow: 0 -4px 0 #2d7ff9; }
+  .cgroup.drop-after { box-shadow: 0 4px 0 #2d7ff9; }
+  .chead { background: #f0f3f7; padding: 8px 10px; user-select: none; }
+  .citem { padding: 8px 10px; border-top: 1px solid #eee; }
+  .citem.selected { background: #eaf3ff; }
+  .citem.editing { background: #fffbe6; }
+  .c1 { display: flex; align-items: center; gap: 8px; }
+  .cno { color: #999; width: 1.2rem; flex: none; }
+  .cv { flex: 1; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-weight: bold; }
+  .cp { flex: none; white-space: nowrap; }
+  .cmemo { color: #666; font-size: .92rem; margin: 4px 0 0 2rem; white-space: pre-wrap; overflow-wrap: anywhere; }
+  .c2 { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin: 6px 0 0 2rem; }
+  .cextra { display: flex; flex-wrap: wrap; align-items: center; gap: 4px; }
+  .cbtns { margin-left: auto; display: flex; gap: 4px; }
+  .egrid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+  .egrid .full { grid-column: 1 / -1; }
+  .egrid input:not([type=checkbox]) { padding: 6px; }
+  .sel-grp { border-top: 1px solid #e6eaf0; padding: 8px 0; }
+  .sel-name { font-weight: bold; margin-bottom: 4px; }
+  .sel-c { padding: 4px 0 4px 8px; }
+  .sel-c .c2 { margin: 4px 0 0; }
+
   #gate { position: fixed; inset: 0; background: #f4f5f7; display: flex; align-items: center; justify-content: center; z-index: 10; }
   #gate .box { background: #fff; padding: 30px; border-radius: 12px; text-align: center; box-shadow: 0 2px 10px rgba(0,0,0,.1); max-width: 360px; }
   #gate .msg { color: #c0392b; font-size: .92rem; margin-top: 12px; min-height: 18px; }
@@ -114,9 +149,6 @@
   .add-line input { flex: 1; min-width: 0; }
   .link-btn { background: none; color: #888; font-size: .85rem; padding: 6px 2px 0; text-decoration: underline; }
 
-  /* ===== 모바일 보정 (표 안에서 손가락으로 가로 스크롤) ===== */
-  .mx-scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; overscroll-behavior-x: contain; }
-  .mx-scroll > table { min-width: calc(var(--vw) + 60rem); }
   @media (max-width: 900px) { .form-grid { grid-template-columns: 1fr 1fr; } }
   @media (max-width: 700px) {
     header { row-gap: 8px; }
@@ -235,6 +267,12 @@ document.querySelectorAll('[data-view]').forEach(b => b.onclick = () => {
 });
 applyView();
 
+// ---------- 화면 폭에 따라 표 / 카드 자동 전환 ----------
+const mq = window.matchMedia('(max-width: 980px)');
+let cardMode = mq.matches;
+const onMq = e => { cardMode = e.matches; render(); };
+if (mq.addEventListener) mq.addEventListener('change', onMq); else mq.addListener(onMq);
+
 // ---------- 전화번호 / 링크 ----------
 function formatPhone(v) {
   v = String(v ?? '');
@@ -338,11 +376,6 @@ function linkCell(l) {
     <button class="btn-small btn-gray" data-copy="${esc(l)}">복사</button>`;
 }
 
-// 구매 항목이면 '렌탈' 칸이 하나 더 생김
-function cols(buy) {
-  return `<colgroup><col style="width:3.2rem"><col style="width:var(--vw)">${buy ? '<col style="width:3.6rem">' : ''}<col style="width:11rem"><col style="width:13.5rem"><col style="width:8.5rem"><col><col style="width:12.5rem"></colgroup>`;
-}
-
 function groupItems(list) {
   const map = new Map();
   list.forEach(it => { if (!map.has(it.name)) map.set(it.name, []); map.get(it.name).push(it); });
@@ -432,12 +465,57 @@ function toggleMulti(name, on) {
   persist();
 }
 
+// ---------- 그룹 정보 / 공통 조각 ----------
+function groupInfo(list, name) {
+  const selN = list.filter(i => i.selected).length;
+  const oneP = list.filter(i => !isRent(i)).map(i => i.price).filter(p => p > 0);
+  const rentP = list.filter(isRent).map(i => i.price).filter(p => p > 0);
+  const minOne = oneP.length ? Math.min(...oneP) : null;
+  const minRent = rentP.length ? Math.min(...rentP) : null;
+  return {
+    selN, done: selN > 0, multi: list.some(i => i.multi), buy: list[0].cat === '구매',
+    oneP, rentP, minOne, minRent,
+    minText: (minOne !== null ? ' · 최저 ' + won(minOne) : '') + (minRent !== null ? ' · 렌탈 최저 월 ' + won(minRent) : ''),
+    statusText: selN === 0 ? '미결정' : selN === 1 ? '✔ 결정완료' : `✔ 선택 ${selN}개`,
+    adding: editingId === NEW_ID && addingName === name
+  };
+}
+function isMinOf(it, g) {
+  return isRent(it) ? (g.minRent !== null && it.price === g.minRent && g.rentP.length > 1)
+                    : (g.minOne !== null && it.price === g.minOne && g.oneP.length > 1);
+}
+function headHTML(name, list, g) {
+  return `<div class="head-in">
+    <div><span class="drag-handle">⠿</span><span class="badge b-${esc(list[0].cat)}">${esc(list[0].cat)}</span><span class="title">${esc(name)}</span>
+      <span class="meta"> · 후보 ${list.length}개${g.minText}</span></div>
+    <div class="head-right">
+      <div class="${g.done ? 'status-done' : 'status-wait'}">${g.statusText}</div>
+      <label class="multi-toggle ${g.multi ? 'on' : ''}" title="여러 후보를 함께 선택할 수 있어요 (예: 방마다 다른 커튼)">
+        <input type="checkbox" data-multi="${esc(name)}" ${g.multi ? 'checked' : ''}> 중복선택
+      </label>
+    </div></div>`;
+}
+function priceCell(it, g) {
+  const chip = g.buy ? `<label class="rent-chip ${it.rental ? 'on' : ''}" title="렌탈이면 체크 (금액은 월 금액)"><input type="checkbox" data-rent="${it.id}" ${it.rental ? 'checked' : ''}>렌탈</label>` : '';
+  return chip + (isMinOf(it, g) ? '<span class="cheap">최저</span>' : '') + priceText(it);
+}
+function rentEdit(it) {
+  return `<label class="rent-chip ${it.rental ? 'on' : ''}"><input type="checkbox" id="eRental" ${it.rental ? 'checked' : ''} onchange="this.parentElement.classList.toggle('on', this.checked)">렌탈</label>`;
+}
+function rowBtns(it, g) {
+  const selLabel = g.multi ? (it.selected ? '☑ 선택됨' : '☐ 선택') : (it.selected ? '선택됨' : '선택');
+  return `<button class="btn-small ${it.selected ? 'btn-primary' : 'btn-gray'}" onclick="toggleSelect('${it.id}')">${selLabel}</button>
+    <button class="btn-small btn-gray" onclick="startEdit('${it.id}')">수정</button>
+    <button class="btn-small btn-red" onclick="deleteItem('${it.id}')">삭제</button>`;
+}
+const EMPTY_ITEM = { vendor: '', price: 0, contact: '', link: '', memo: '', rental: false };
+
+// ---------- PC: 한 표 ----------
 function editRow(no, it, buy) {
   return `<tr class="editing">
-    <td>${no}</td>
+    <td class="no">${no}</td>
     <td><input id="eVendor" value="${esc(it.vendor)}" placeholder="업체·제품"></td>
-    ${buy ? `<td class="ctr"><input type="checkbox" id="eRental" class="rent-cb" ${it.rental ? 'checked' : ''} title="렌탈(월 금액)"></td>` : ''}
-    <td><input id="ePrice" value="${it.price ? it.price.toLocaleString('ko-KR') : ''}" placeholder="${buy ? '금액 (렌탈이면 월)' : '금액'}" style="text-align:right"></td>
+    <td><div class="price-edit">${buy ? rentEdit(it) : ''}<input id="ePrice" value="${it.price ? it.price.toLocaleString('ko-KR') : ''}" placeholder="${buy ? '금액(렌탈은 월)' : '금액'}" style="text-align:right"></div></td>
     <td><input id="eContact" value="${esc(it.contact)}" placeholder="연락처" inputmode="tel"></td>
     <td><input id="eLink" value="${esc(it.link)}" placeholder="링크"></td>
     <td><input id="eMemo" value="${esc(it.memo)}" placeholder="비고"></td>
@@ -446,7 +524,68 @@ function editRow(no, it, buy) {
       <button class="btn-small btn-gray" onclick="cancelEdit()">취소</button>
     </td></tr>`;
 }
+function tableHTML(vis) {
+  let h = `<table class="qt"><colgroup><col style="width:3rem"><col style="width:var(--vw)"><col style="width:14rem"><col style="width:12.5rem"><col style="width:8rem"><col><col style="width:12.5rem"></colgroup>
+    <thead><tr><th>후보</th><th>업체·제품</th><th class="price">금액</th><th>연락처</th><th>링크</th><th>비고</th><th></th></tr></thead>`;
+  vis.forEach(([name, list]) => {
+    const g = groupInfo(list, name);
+    h += `<tbody class="group" data-name="${esc(name)}">
+      <tr class="ghead" draggable="true" title="드래그해서 순서 변경"><td colspan="7">${headHTML(name, list, g)}</td></tr>`;
+    list.forEach((it, idx) => {
+      if (it.id === editingId) { h += editRow(idx + 1, it, g.buy); return; }
+      h += `<tr class="${it.selected ? 'selected' : ''}">
+        <td class="no">${idx + 1}</td>
+        <td class="vendor" title="${esc(it.vendor)}">${it.selected ? '⭐ ' : ''}${esc(it.vendor)}</td>
+        <td class="price">${priceCell(it, g)}</td>
+        <td class="nowrap">${contactCell(it.contact)}</td>
+        <td class="nowrap">${linkCell(it.link)}</td>
+        <td class="memo">${esc(it.memo)}</td>
+        <td class="btns">${rowBtns(it, g)}</td></tr>`;
+    });
+    h += g.adding ? editRow(list.length + 1, EMPTY_ITEM, g.buy)
+      : `<tr class="addrow"><td colspan="7"><button class="add-row-btn" data-add="${esc(name)}">+ ${esc(name)} 후보 추가</button></td></tr>`;
+    h += `</tbody>`;
+  });
+  return h + `</table>`;
+}
 
+// ---------- 폰: 카드형 ----------
+function editCard(no, it, buy) {
+  return `<div class="citem editing">
+    <div class="egrid">
+      <input id="eVendor" class="full" value="${esc(it.vendor)}" placeholder="${no}. 업체·제품">
+      <div class="price-edit full">${buy ? rentEdit(it) : ''}<input id="ePrice" value="${it.price ? it.price.toLocaleString('ko-KR') : ''}" placeholder="${buy ? '금액(렌탈은 월)' : '금액'}" inputmode="numeric"></div>
+      <input id="eContact" value="${esc(it.contact)}" placeholder="연락처" inputmode="tel">
+      <input id="eLink" value="${esc(it.link)}" placeholder="링크">
+      <input id="eMemo" class="full" value="${esc(it.memo)}" placeholder="비고">
+    </div>
+    <div class="cbtns" style="margin-top:6px;justify-content:flex-end">
+      <button class="btn-small btn-primary" onclick="saveEdit()">저장</button>
+      <button class="btn-small btn-gray" onclick="cancelEdit()">취소</button>
+    </div></div>`;
+}
+function itemCard(it, idx, g) {
+  const extra = contactCell(it.contact) + linkCell(it.link);
+  return `<div class="citem ${it.selected ? 'selected' : ''}">
+    <div class="c1"><span class="cno">${idx + 1}</span>
+      <span class="cv" title="${esc(it.vendor)}">${it.selected ? '⭐ ' : ''}${esc(it.vendor)}</span>
+      <span class="cp">${priceCell(it, g)}</span></div>
+    ${it.memo ? `<div class="cmemo">${esc(it.memo)}</div>` : ''}
+    <div class="c2"><div class="cextra">${extra}</div><div class="cbtns">${rowBtns(it, g)}</div></div>
+  </div>`;
+}
+function cardsHTML(vis) {
+  return vis.map(([name, list]) => {
+    const g = groupInfo(list, name);
+    let h = `<div class="cgroup group" data-name="${esc(name)}"><div class="chead" draggable="true">${headHTML(name, list, g)}</div>`;
+    list.forEach((it, idx) => { h += it.id === editingId ? editCard(idx + 1, it, g.buy) : itemCard(it, idx, g); });
+    h += g.adding ? editCard(list.length + 1, EMPTY_ITEM, g.buy)
+      : `<div style="border-top:1px solid #eee"><button class="add-row-btn" data-add="${esc(name)}">+ ${esc(name)} 후보 추가</button></div>`;
+    return h + `</div>`;
+  }).join('');
+}
+
+// ---------- 드래그로 항목 순서 변경 ----------
 function moveGroup(from, to, after) {
   if (from === to) return;
   const moving = items.filter(i => i.name === from);
@@ -463,16 +602,16 @@ function moveGroup(from, to, after) {
   items = rest;
   persist();
 }
-function clearDrop() { document.querySelectorAll('.group').forEach(g => g.classList.remove('drop-before', 'drop-after')); }
+function clearDrop() { document.querySelectorAll('#list .group').forEach(g => g.classList.remove('drop-before', 'drop-after')); }
 function bindDrag() {
-  document.querySelectorAll('.group').forEach(g => {
-    const head = g.querySelector('.group-head');
+  document.querySelectorAll('#list .group').forEach(g => {
+    const head = g.querySelector('[draggable]'); if (!head) return;
     head.addEventListener('dragstart', e => {
       if (noDrag) { e.preventDefault(); noDrag = false; return; }
       dragName = g.dataset.name;
       e.dataTransfer.effectAllowed = 'move';
       e.dataTransfer.setData('text/plain', dragName);
-      e.dataTransfer.setDragImage(g, 30, 20);
+      try { e.dataTransfer.setDragImage(g.tagName === 'TBODY' ? head : g, 30, 20); } catch {}
       setTimeout(() => g.classList.add('dragging'), 0);
     });
     head.addEventListener('dragend', () => { dragName = null; clearDrop(); g.classList.remove('dragging'); });
@@ -493,6 +632,7 @@ function bindDrag() {
   });
 }
 
+// ---------- 화면 그리기 ----------
 function render() {
   pendingRemote = false;
   $('nameList').innerHTML = [...new Set(items.map(i => i.name))].map(n => `<option value="${esc(n)}">`).join('');
@@ -503,6 +643,7 @@ function render() {
   const posInGroup = new Map();
   groups.forEach(list => list.forEach((it, i) => posInGroup.set(it.id, i)));
 
+  // 요약
   const selected = items.filter(i => i.selected).sort((a, b) =>
     (CATS.indexOf(a.cat) - CATS.indexOf(b.cat)) ||
     (groupOrder.get(a.name) - groupOrder.get(b.name)) ||
@@ -519,87 +660,53 @@ function render() {
   html += `<div class="stat"><div class="label">미결정 항목</div><div class="value" style="color:${waitCount ? '#e74c3c' : '#27ae60'}">${waitCount}개 / 총 ${groups.size}개</div></div>`;
   $('summary').innerHTML = html;
 
+  // 선택한 후보 목록 (같은 항목끼리 붙음)
+  const selCount = {};
+  selected.forEach(i => selCount[i.name] = (selCount[i.name] || 0) + 1);
+  const nameHTML = it => `<span class="badge b-${esc(it.cat)}">${esc(it.cat)}</span>${esc(it.name)}${selCount[it.name] > 1 ? `<span class="sel-count">${selCount[it.name]}개</span>` : ''}`;
+  const selPrice = it => (isRent(it) ? '<span class="rent-tag">렌탈</span>' : '') + priceText(it);
+  const unselBtn = it => `<button class="btn-small btn-gray" onclick="unselect('${it.id}')">선택해제</button>`;
   if (!selected.length) {
     $('selectedList').innerHTML = `<div class="sel-empty">아직 선택한 후보가 없어요. 아래 목록에서 '선택'을 눌러보세요.</div>`;
+  } else if (cardMode) {
+    let s = '', prev = null;
+    selected.forEach(it => {
+      if (it.name !== prev) { if (prev !== null) s += '</div>'; prev = it.name; s += `<div class="sel-grp"><div class="sel-name">${nameHTML(it)}</div>`; }
+      s += `<div class="sel-c">
+        <div class="c1"><span class="cv">${esc(it.vendor)}</span><span class="cp">${selPrice(it)}</span></div>
+        ${it.memo ? `<div class="cmemo" style="margin-left:0">${esc(it.memo)}</div>` : ''}
+        <div class="c2"><div class="cextra">${contactCell(it.contact)}</div><div class="cbtns">${unselBtn(it)}</div></div></div>`;
+    });
+    $('selectedList').innerHTML = s + '</div>';
   } else {
-    const selCount = {};
-    selected.forEach(i => selCount[i.name] = (selCount[i.name] || 0) + 1);
-    let s = `<div class="mx-scroll"><table class="sel-table"><colgroup><col style="width:12rem"><col style="width:var(--vw)"><col style="width:12rem"><col style="width:13.5rem"><col><col style="width:6.5rem"></colgroup>
+    let s = `<table class="sel-table"><colgroup><col style="width:12rem"><col style="width:var(--vw)"><col style="width:12rem"><col style="width:13.5rem"><col><col style="width:6.5rem"></colgroup>
       <tr><th>항목</th><th>업체·제품</th><th class="price">금액</th><th>연락처</th><th>비고</th><th></th></tr>`;
     let prev = null;
     selected.forEach(it => {
       const first = it.name !== prev; prev = it.name;
-      const nameCell = first
-        ? `<span class="badge b-${esc(it.cat)}">${esc(it.cat)}</span>${esc(it.name)}${selCount[it.name] > 1 ? `<span class="sel-count">${selCount[it.name]}개</span>` : ''}`
-        : '';
-      s += `<tr class="${first ? 'sel-first' : 'sel-cont'}"><td>${nameCell}</td>
+      s += `<tr class="${first ? '' : 'sel-cont'}"><td>${first ? nameHTML(it) : ''}</td>
         <td class="vendor" title="${esc(it.vendor)}">${esc(it.vendor)}</td>
-        <td class="price">${isRent(it) ? '<span class="rent-tag">렌탈</span>' : ''}${priceText(it)}</td>
+        <td class="price">${selPrice(it)}</td>
         <td class="nowrap">${contactCell(it.contact)}</td>
         <td class="memo">${esc(it.memo)}</td>
-        <td class="btns"><button class="btn-small btn-gray" onclick="unselect('${it.id}')">선택해제</button></td></tr>`;
+        <td class="btns">${unselBtn(it)}</td></tr>`;
     });
-    $('selectedList').innerHTML = s + '</table></div>';
+    $('selectedList').innerHTML = s + '</table>';
   }
 
+  // 목록
   const fc = $('filterCat').value, fs = $('filterStatus').value, q = $('search').value.trim().toLowerCase();
-  let out = '';
+  const vis = [];
   groups.forEach((list, name) => {
-    const selN = list.filter(i => i.selected).length;
-    const done = selN > 0;
-    const multi = list.some(i => i.multi);
-    const buy = list[0].cat === '구매';
+    const done = list.some(i => i.selected);
     if (fc && !list.some(i => i.cat === fc)) return;
     if (fs === 'wait' && done) return;
     if (fs === 'done' && !done) return;
     if (q && !list.some(i => [i.name, i.vendor, i.memo, i.contact, i.link].join(' ').toLowerCase().includes(q))) return;
-
-    // 일시불과 렌탈(월)은 따로 최저가 비교
-    const oneP = list.filter(i => !isRent(i)).map(i => i.price).filter(p => p > 0);
-    const rentP = list.filter(isRent).map(i => i.price).filter(p => p > 0);
-    const minOne = oneP.length ? Math.min(...oneP) : null;
-    const minRent = rentP.length ? Math.min(...rentP) : null;
-    const minText = (minOne !== null ? ' · 최저 ' + won(minOne) : '') + (minRent !== null ? ' · 렌탈 최저 월 ' + won(minRent) : '');
-    const isAddingHere = editingId === NEW_ID && addingName === name;
-    const statusText = selN === 0 ? '미결정' : selN === 1 ? '✔ 결정완료' : `✔ 선택 ${selN}개`;
-    out += `<div class="group" data-name="${esc(name)}">
-      <div class="group-head" draggable="true" title="드래그해서 순서 변경">
-        <div><span class="drag-handle">⠿</span><span class="badge b-${esc(list[0].cat)}">${esc(list[0].cat)}</span><span class="title">${esc(name)}</span>
-          <span class="meta"> · 후보 ${list.length}개${minText}</span></div>
-        <div class="head-right">
-          <div class="${done ? 'status-done' : 'status-wait'}">${statusText}</div>
-          <label class="multi-toggle ${multi ? 'on' : ''}" title="여러 후보를 함께 선택할 수 있어요 (예: 방마다 다른 커튼)">
-            <input type="checkbox" data-multi="${esc(name)}" ${multi ? 'checked' : ''}> 중복선택
-          </label>
-        </div>
-      </div>
-      <div class="mx-scroll"><table>${cols(buy)}<tr><th>후보</th><th>업체·제품</th>${buy ? '<th class="ctr">렌탈</th>' : ''}<th class="price">금액</th><th>연락처</th><th>링크</th><th>비고</th><th></th></tr>`;
-    list.forEach((it, idx) => {
-      if (it.id === editingId) { out += editRow(idx + 1, it, buy); return; }
-      const r = isRent(it);
-      const isMin = r ? (minRent !== null && it.price === minRent && rentP.length > 1)
-                      : (minOne !== null && it.price === minOne && oneP.length > 1);
-      const selLabel = multi ? (it.selected ? '☑ 선택됨' : '☐ 선택') : (it.selected ? '선택됨' : '선택');
-      out += `<tr class="${it.selected ? 'selected' : ''}">
-        <td>${idx + 1}</td>
-        <td class="vendor" title="${esc(it.vendor)}">${it.selected ? '⭐ ' : ''}${esc(it.vendor)}</td>
-        ${buy ? `<td class="ctr"><input type="checkbox" class="rent-cb" data-rent="${it.id}" ${it.rental ? 'checked' : ''} title="렌탈(월 금액)"></td>` : ''}
-        <td class="price">${isMin ? '<span class="cheap">최저</span>' : ''}${priceText(it)}</td>
-        <td class="nowrap">${contactCell(it.contact)}</td>
-        <td class="nowrap">${linkCell(it.link)}</td>
-        <td class="memo">${esc(it.memo)}</td>
-        <td class="btns">
-          <button class="btn-small ${it.selected ? 'btn-primary' : 'btn-gray'}" onclick="toggleSelect('${it.id}')">${selLabel}</button>
-          <button class="btn-small btn-gray" onclick="startEdit('${it.id}')">수정</button>
-          <button class="btn-small btn-red" onclick="deleteItem('${it.id}')">삭제</button>
-        </td></tr>`;
-    });
-    if (isAddingHere) out += editRow(list.length + 1, { vendor: '', price: 0, contact: '', link: '', memo: '', rental: false }, buy);
-    out += `</table></div>`;
-    if (!isAddingHere) out += `<div class="group-foot"><button class="add-row-btn" data-add="${esc(name)}">+ ${esc(name)} 후보 추가</button></div>`;
-    out += `</div>`;
+    vis.push([name, list]);
   });
-  $('list').innerHTML = out || `<div class="empty">${items.length ? '조건에 맞는 항목이 없어요.' : '아직 후보가 없어요. 위에서 추가해보세요!'}</div>`;
+  $('list').innerHTML = vis.length ? (cardMode ? cardsHTML(vis) : tableHTML(vis))
+    : `<div class="empty">${items.length ? '조건에 맞는 항목이 없어요.' : '아직 후보가 없어요. 위에서 추가해보세요!'}</div>`;
 
   document.querySelectorAll('[data-add]').forEach(b => b.onclick = () => startAdd(b.dataset.add));
   document.querySelectorAll('[data-multi]').forEach(cb => cb.onchange = () => toggleMulti(cb.dataset.multi, cb.checked));
