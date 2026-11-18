@@ -5,119 +5,132 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>이사 준비 견적 비교</title>
 <style>
+  :root { --base: 13px; --vw: 12rem; }
+  html { font-size: var(--base); }
   * { box-sizing: border-box; }
-  body { font-family: "Malgun Gothic", "Apple SD Gothic Neo", sans-serif; margin: 0; background: #f4f5f7; color: #222; }
-  header { background: #2d3e50; color: #fff; padding: 12px 24px; display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
-  header h1 { margin: 0; font-size: 20px; flex: 1; white-space: nowrap; }
-  header .user { font-size: 13px; opacity: .85; }
-  header .sync { font-size: 12px; background: rgba(255,255,255,.15); padding: 3px 10px; border-radius: 10px; }
-  main { max-width: 1200px; margin: 0 auto; padding: 20px; }
-  .card { background: #fff; border-radius: 10px; padding: 16px; margin-bottom: 16px; box-shadow: 0 1px 3px rgba(0,0,0,.08); }
-  .card h2 { margin: 0 0 12px; font-size: 16px; }
-  .form-grid { display: grid; grid-template-columns: 90px 130px 140px 110px 150px 170px 1fr; gap: 8px; }
-  .form-grid label { font-size: 12px; color: #666; display: block; margin-bottom: 3px; }
-  input, select { width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 6px; font-size: 14px; font-family: inherit; }
-  button, .btn { padding: 8px 14px; border: none; border-radius: 6px; cursor: pointer; font-size: 14px; font-family: inherit; text-decoration: none; display: inline-block; }
+  body { font-family: "Malgun Gothic", "Apple SD Gothic Neo", sans-serif; margin: 0; background: #f4f5f7; color: #222; font-size: 1rem; }
+  header { background: #2d3e50; color: #fff; padding: 10px 22px; display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+  header h1 { margin: 0; font-size: 1.38rem; flex: 1; white-space: nowrap; }
+  header .user { font-size: .92rem; opacity: .85; }
+  header .sync { font-size: .85rem; background: rgba(255,255,255,.15); padding: 3px 10px; border-radius: 10px; }
+  main { max-width: 1240px; margin: 0 auto; padding: 18px; }
+  .card { background: #fff; border-radius: 10px; padding: 14px; margin-bottom: 14px; box-shadow: 0 1px 3px rgba(0,0,0,.08); }
+  .card h2 { margin: 0 0 10px; font-size: 1.15rem; }
+  .form-grid { display: grid; grid-template-columns: 7rem 10rem 10.5rem 9.5rem 11.5rem 13rem 1fr; gap: 8px; }
+  .form-grid label, .form-grid .flabel { font-size: .85rem; color: #666; display: block; margin-bottom: 3px; white-space: nowrap; }
+  .form-grid .rent-opt { display: inline-flex; align-items: center; gap: 3px; margin: 0 0 0 6px; color: #1a5fd0; cursor: pointer; }
+  input, select { width: 100%; padding: 7px 8px; border: 1px solid #ccc; border-radius: 6px; font-size: 1rem; font-family: inherit; }
+  input[type=checkbox] { width: auto; padding: 0; margin: 0; cursor: pointer; }
+  button, .btn { padding: 7px 13px; border: none; border-radius: 6px; cursor: pointer; font-size: 1rem; font-family: inherit; text-decoration: none; display: inline-block; }
   .btn-primary { background: #2d7ff9; color: #fff; }
   .btn-gray { background: #e3e6ea; color: #333; }
   .btn-red { background: #fde8e8; color: #c0392b; }
   .btn-call { background: #e3f6ea; color: #1e8449; }
   .btn-open { background: #e8f0fe; color: #1a5fd0; }
-  .btn-small { padding: 4px 8px; font-size: 12px; }
+  .btn-small { padding: 4px 8px; font-size: .85rem; }
   .actions { margin-top: 10px; display: flex; gap: 8px; }
-  .summary { display: flex; gap: 12px; flex-wrap: wrap; }
-  .stat { flex: 1; min-width: 150px; background: #f8f9fb; border-radius: 8px; padding: 12px; }
-  .stat .label { font-size: 12px; color: #777; }
-  .stat .value { font-size: 20px; font-weight: bold; margin-top: 4px; }
+  .summary { display: flex; gap: 10px; flex-wrap: wrap; }
+  .stat { flex: 1; min-width: 10rem; background: #f8f9fb; border-radius: 8px; padding: 10px 12px; }
+  .stat .label { font-size: .85rem; color: #777; }
+  .stat .value { font-size: 1.38rem; font-weight: bold; margin-top: 4px; }
   .stat.total .value { color: #2d7ff9; }
-  .sel-title { font-size: 13px; color: #777; margin: 16px 0 6px; }
-  .sel-empty { font-size: 13px; color: #aaa; padding: 10px 0; }
+  .stat.rent .value { color: #1a5fd0; }
+  .sel-title { font-size: .92rem; color: #777; margin: 14px 0 6px; }
+  .sel-empty { font-size: .92rem; color: #aaa; padding: 10px 0; }
   .toolbar { display: flex; gap: 8px; margin-bottom: 12px; flex-wrap: wrap; }
   .toolbar select, .toolbar input { width: auto; }
   .group { border: 1px solid #e3e6ea; border-radius: 8px; margin-bottom: 12px; overflow: hidden; transition: opacity .15s; }
   .group.dragging { opacity: .35; }
   .group.drop-before { box-shadow: 0 -4px 0 #2d7ff9; }
   .group.drop-after { box-shadow: 0 4px 0 #2d7ff9; }
-  .group-head { background: #f0f3f7; padding: 10px 12px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 6px; cursor: grab; user-select: none; }
+  .group-head { background: #f0f3f7; padding: 9px 12px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 6px; cursor: grab; user-select: none; }
   .group-head:active { cursor: grabbing; }
-  .group-head .title { font-weight: bold; font-size: 15px; }
+  .group-head .title { font-weight: bold; font-size: 1.08rem; }
+  .group-head .meta { color: #888; font-size: .92rem; }
   .head-right { display: flex; align-items: center; gap: 10px; }
-  .multi-toggle { display: inline-flex; align-items: center; gap: 4px; font-size: 12px; color: #555; background: #fff; border: 1px solid #d8dde3; padding: 3px 9px; border-radius: 12px; cursor: pointer; white-space: nowrap; }
+  .multi-toggle { display: inline-flex; align-items: center; gap: 4px; font-size: .85rem; color: #555; background: #fff; border: 1px solid #d8dde3; padding: 3px 9px; border-radius: 12px; cursor: pointer; white-space: nowrap; }
   .multi-toggle.on { border-color: #2d7ff9; color: #1a5fd0; background: #eef5ff; }
-  .multi-toggle input { width: auto; margin: 0; padding: 0; cursor: pointer; }
   .group-foot { border-top: 1px solid #eee; }
-  .add-row-btn { width: 100%; background: none; color: #2d7ff9; font-size: 13px; padding: 8px 12px; border-radius: 0; text-align: left; }
+  .add-row-btn { width: 100%; background: none; color: #2d7ff9; font-size: .92rem; padding: 7px 12px; border-radius: 0; text-align: left; }
   .add-row-btn:hover { background: #f3f8ff; }
-  .drag-handle { color: #aab; font-size: 16px; margin-right: 8px; }
-  .badge { display: inline-block; font-size: 11px; padding: 2px 8px; border-radius: 10px; margin-right: 6px; color: #fff; white-space: nowrap; }
+  .drag-handle { color: #aab; font-size: 1.15rem; margin-right: 8px; }
+  .badge { display: inline-block; font-size: .8rem; padding: 2px 8px; border-radius: 10px; margin-right: 6px; color: #fff; white-space: nowrap; }
   .b-시공 { background: #e67e22; } .b-구매 { background: #27ae60; } .b-서비스 { background: #8e44ad; } .b-기타 { background: #7f8c8d; }
-  .status-done { color: #27ae60; font-size: 13px; font-weight: bold; white-space: nowrap; }
-  .status-wait { color: #e74c3c; font-size: 13px; font-weight: bold; white-space: nowrap; }
-  table { width: 100%; border-collapse: collapse; font-size: 14px; table-layout: fixed; }
-  th, td { padding: 8px 10px; border-top: 1px solid #eee; text-align: left; vertical-align: middle; overflow-wrap: anywhere; }
-  th { font-size: 12px; color: #777; font-weight: normal; background: #fafbfc; white-space: nowrap; }
+  .status-done { color: #27ae60; font-size: .92rem; font-weight: bold; white-space: nowrap; }
+  .status-wait { color: #e74c3c; font-size: .92rem; font-weight: bold; white-space: nowrap; }
+  table { width: 100%; border-collapse: collapse; font-size: 1rem; table-layout: fixed; }
+  th, td { padding: 7px 9px; border-top: 1px solid #eee; text-align: left; vertical-align: middle; overflow-wrap: anywhere; }
+  th { font-size: .85rem; color: #777; font-weight: normal; background: #fafbfc; white-space: nowrap; }
   td.price, th.price { text-align: right; white-space: nowrap; }
   td.memo { white-space: pre-wrap; color: #444; }
   td.btns, td.nowrap { white-space: nowrap; }
   td.btns { text-align: right; }
+  td.vendor { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  td.ctr, th.ctr { text-align: center; }
   .phone { margin-right: 6px; }
   tr.selected { background: #eaf3ff; }
   tr.editing { background: #fffbe6; }
-  tr.editing input { padding: 5px 6px; font-size: 13px; }
-  .cheap { display: inline-block; font-size: 11px; color: #1e8449; background: #e3f6ea; padding: 1px 6px; border-radius: 8px; margin-right: 6px; }
+  tr.editing input:not([type=checkbox]) { padding: 5px 6px; font-size: .92rem; }
+  .rent-cb { width: 17px !important; height: 17px; }
+  .cheap { display: inline-block; font-size: .8rem; color: #1e8449; background: #e3f6ea; padding: 1px 6px; border-radius: 8px; margin-right: 6px; }
+  .rent-tag { display: inline-block; font-size: .8rem; color: #1a5fd0; background: #e8f0fe; padding: 1px 6px; border-radius: 8px; margin-right: 6px; }
   .empty { text-align: center; color: #999; padding: 30px; }
   .sel-table td { background: #f8fbff; }
   .sel-table tr.sel-first td { border-top: 1px solid #dfe5ec; }
   .sel-table tr.sel-cont td { border-top: 1px dashed #e6eaf0; }
   .sel-table tr.sel-cont td:first-child { border-top: none; }
-  .sel-count { color: #888; font-size: 12px; margin-left: 4px; }
+  .sel-count { color: #888; font-size: .85rem; margin-left: 4px; }
   #gate { position: fixed; inset: 0; background: #f4f5f7; display: flex; align-items: center; justify-content: center; z-index: 10; }
-  #gate .box { background: #fff; padding: 32px; border-radius: 12px; text-align: center; box-shadow: 0 2px 10px rgba(0,0,0,.1); max-width: 360px; }
-  #gate .msg { color: #c0392b; font-size: 13px; margin-top: 12px; min-height: 18px; }
-  #toast { position: fixed; left: 50%; bottom: 30px; transform: translateX(-50%); background: #2d3e50; color: #fff; padding: 10px 18px; border-radius: 20px; font-size: 14px; opacity: 0; transition: opacity .2s; pointer-events: none; z-index: 20; }
+  #gate .box { background: #fff; padding: 30px; border-radius: 12px; text-align: center; box-shadow: 0 2px 10px rgba(0,0,0,.1); max-width: 360px; }
+  #gate .msg { color: #c0392b; font-size: .92rem; margin-top: 12px; min-height: 18px; }
+  #toast { position: fixed; left: 50%; bottom: 30px; transform: translateX(-50%); background: #2d3e50; color: #fff; padding: 9px 18px; border-radius: 20px; font-size: 1rem; opacity: 0; transition: opacity .2s; pointer-events: none; z-index: 20; }
   #toast.show { opacity: 1; }
 
-  /* ===== 탭 ===== */
-  .tabs { display: flex; gap: 8px; margin-bottom: 16px; }
-  .tab { flex: none; background: #e3e6ea; color: #555; font-weight: bold; padding: 10px 18px; border-radius: 20px; }
+  /* ===== 탭 + 보기 조절 ===== */
+  .tabs { display: flex; gap: 8px; margin-bottom: 14px; flex-wrap: wrap; align-items: center; }
+  .tab { flex: none; background: #e3e6ea; color: #555; font-weight: bold; padding: 9px 17px; border-radius: 20px; }
   .tab.active { background: #2d3e50; color: #fff; }
+  .view-ctl { margin-left: auto; display: flex; align-items: center; gap: 4px; font-size: .85rem; color: #666; }
+  .view-ctl .sep { width: 10px; }
+  .view-ctl button { padding: 4px 9px; font-size: .85rem; background: #fff; border: 1px solid #d8dde3; color: #333; }
 
   /* ===== 살 것 메모 ===== */
   .shop-add { display: flex; gap: 8px; }
   .shop-add input { flex: 1; }
-  .shop-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 16px; }
+  .shop-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(23rem, 1fr)); gap: 14px; }
   .shop-grid .card { margin-bottom: 0; }
   .store-head { display: flex; align-items: center; gap: 6px; margin-bottom: 6px; }
-  .store-name { flex: 1; min-width: 0; border: none; font-size: 16px; font-weight: bold; padding: 4px 6px; background: transparent; }
+  .store-name { flex: 1; min-width: 0; border: none; font-size: 1.15rem; font-weight: bold; padding: 4px 6px; background: transparent; }
   .store-name:focus, .shop-item .txt:focus { background: #fffbe6; outline: 1px solid #f0d878; }
-  .store-count { font-size: 12px; color: #888; white-space: nowrap; }
-  .shop-item { display: flex; align-items: center; gap: 8px; padding: 4px 0; border-top: 1px solid #f0f0f0; }
-  .shop-item input[type=checkbox] { width: 20px; height: 20px; flex: none; margin: 0 2px; cursor: pointer; }
+  .store-count { font-size: .85rem; color: #888; white-space: nowrap; }
+  .shop-item { display: flex; align-items: center; gap: 8px; padding: 3px 0; border-top: 1px solid #f0f0f0; }
+  .shop-item input[type=checkbox] { width: 19px; height: 19px; flex: none; margin: 0 2px; }
   .shop-item .txt { flex: 1; min-width: 0; border: none; padding: 6px; background: transparent; }
   .shop-item.done .txt { text-decoration: line-through; color: #aaa; }
-  .x-btn { background: none; color: #bbb; padding: 4px 8px; font-size: 18px; line-height: 1; }
+  .x-btn { background: none; color: #bbb; padding: 4px 8px; font-size: 1.3rem; line-height: 1; }
   .x-btn:hover { color: #c0392b; }
-  .shop-empty { font-size: 13px; color: #aaa; padding: 8px 2px; border-top: 1px solid #f0f0f0; }
+  .shop-empty { font-size: .92rem; color: #aaa; padding: 8px 2px; border-top: 1px solid #f0f0f0; }
   .add-line { display: flex; gap: 6px; margin-top: 10px; }
   .add-line input { flex: 1; min-width: 0; }
-  .link-btn { background: none; color: #888; font-size: 12px; padding: 6px 2px 0; text-decoration: underline; }
+  .link-btn { background: none; color: #888; font-size: .85rem; padding: 6px 2px 0; text-decoration: underline; }
 
   /* ===== 모바일 보정 (표 안에서 손가락으로 가로 스크롤) ===== */
   .mx-scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; overscroll-behavior-x: contain; }
-  .mx-scroll > table { min-width: 860px; }
+  .mx-scroll > table { min-width: calc(var(--vw) + 60rem); }
   @media (max-width: 900px) { .form-grid { grid-template-columns: 1fr 1fr; } }
   @media (max-width: 700px) {
-    header { row-gap: 10px; }
+    header { row-gap: 8px; }
     header h1 { flex: 1 0 100%; }
-    main { padding: 14px; }
-    .tab { flex: 1; padding: 10px 8px; }
+    main { padding: 12px; }
+    .tab { flex: 1; padding: 9px 8px; }
+    .view-ctl { margin-left: 0; width: 100%; justify-content: flex-end; }
   }
 </style>
 </head>
 <body>
 <div id="gate"><div class="box">
   <h2 style="margin-top:0">🏠 이사 준비 견적 비교표</h2>
-  <p style="color:#666;font-size:14px">등록된 구글 계정으로 로그인해 주세요.</p>
+  <p style="color:#666">등록된 구글 계정으로 로그인해 주세요.</p>
   <button class="btn-primary" id="btnLogin">구글로 로그인</button>
   <div class="msg" id="gateMsg"></div>
 </div></div>
@@ -133,6 +146,15 @@
   <div class="tabs">
     <button class="tab" data-tab="quote">📋 견적 비교</button>
     <button class="tab" data-tab="shop" id="tabShopBtn">🛒 살 것 메모</button>
+    <div class="view-ctl">
+      <span>글자</span>
+      <button data-view="fs" data-d="-1" title="글자 작게">가−</button>
+      <button data-view="fs" data-d="1" title="글자 크게">가+</button>
+      <span class="sep"></span>
+      <span>업체칸</span>
+      <button data-view="vw" data-d="-1" title="업체칸 좁게">◀</button>
+      <button data-view="vw" data-d="1" title="업체칸 넓게">▶</button>
+    </div>
   </div>
 
   <!-- ===================== 탭1: 견적 비교 ===================== -->
@@ -144,7 +166,7 @@
           <select id="fCat"><option>시공</option><option>구매</option><option>서비스</option><option>기타</option></select></div>
         <div><label>항목 *</label><input id="fName" list="nameList" placeholder="예: 줄눈"></div>
         <div><label>업체·제품 *</label><input id="fVendor" placeholder="예: A줄눈"></div>
-        <div><label>금액 (원)</label><input id="fPrice" placeholder="600000"></div>
+        <div><div class="flabel">금액 (원)<label class="rent-opt" id="fRentWrap"><input type="checkbox" id="fRental"> 렌탈(월)</label></div><input id="fPrice" placeholder="600000"></div>
         <div><label>연락처</label><input id="fContact" placeholder="010-0000-0000" inputmode="tel"></div>
         <div><label>링크</label><input id="fLink" placeholder="https://..."></div>
         <div><label>비고</label><input id="fMemo" placeholder="예: 케라폭시, 욕실2+현관, AS 2년"></div>
@@ -194,6 +216,24 @@
 const CATS = ['시공','구매','서비스','기타'];
 const NEW_ID = '__new__';
 const $ = id => document.getElementById(id);
+
+// ---------- 보기 설정 (글자 크기 / 업체칸 폭) : 기기마다 따로 저장 ----------
+const VIEW_KEY = 'moving-view';
+let view = { fs: 13, vw: 12 };
+try { Object.assign(view, JSON.parse(localStorage.getItem(VIEW_KEY) || '{}')); } catch {}
+function applyView() {
+  const r = document.documentElement.style;
+  r.setProperty('--base', view.fs + 'px');
+  r.setProperty('--vw', view.vw + 'rem');
+  try { localStorage.setItem(VIEW_KEY, JSON.stringify(view)); } catch {}
+}
+document.querySelectorAll('[data-view]').forEach(b => b.onclick = () => {
+  const d = Number(b.dataset.d);
+  if (b.dataset.view === 'fs') { view.fs = Math.min(17, Math.max(11, view.fs + d)); toast(`글자 크기 ${view.fs}`); }
+  else { view.vw = Math.min(30, Math.max(8, view.vw + d * 2)); toast(`업체칸 폭 ${view.vw}`); }
+  applyView();
+});
+applyView();
 
 // ---------- 전화번호 / 링크 ----------
 function formatPhone(v) {
@@ -262,7 +302,7 @@ function migrate(arr) {
     let contact = i.contact || '', link = i.link;
     if (link === undefined) { link = ''; if (/^https?:\/\//.test(contact)) { link = contact; contact = ''; } }
     return {
-      id: String(i.id || Date.now() + '' + Math.random()), selected: !!i.selected, multi: !!i.multi,
+      id: String(i.id || Date.now() + '' + Math.random()), selected: !!i.selected, multi: !!i.multi, rental: !!i.rental,
       cat: i.cat || '기타', name: i.name || '', vendor: i.vendor || '', price: Number(i.price) || 0,
       contact: formatPhone(contact), link: link || '', memo: i.memo || ''
     };
@@ -282,6 +322,8 @@ function persist() {
   else alert('아직 서버에 연결되지 않았어요. 잠시 후 다시 시도해 주세요.');
 }
 function isMulti(name) { return items.some(i => i.name === name && i.multi); }
+function isRent(i) { return !!i.rental && i.cat === '구매'; }
+function priceText(i) { return i.price ? (isRent(i) ? '월 ' : '') + won(i.price) : '-'; }
 ['pointerup', 'pointercancel'].forEach(ev => document.addEventListener(ev, () => setTimeout(() => noDrag = false, 0)));
 
 function contactCell(c) {
@@ -296,13 +338,25 @@ function linkCell(l) {
     <button class="btn-small btn-gray" data-copy="${esc(l)}">복사</button>`;
 }
 
-const COLS = `<colgroup><col style="width:46px"><col style="width:13%"><col style="width:140px"><col style="width:185px"><col style="width:115px"><col><col style="width:160px"></colgroup>`;
+// 구매 항목이면 '렌탈' 칸이 하나 더 생김
+function cols(buy) {
+  return `<colgroup><col style="width:3.2rem"><col style="width:var(--vw)">${buy ? '<col style="width:3.6rem">' : ''}<col style="width:11rem"><col style="width:13.5rem"><col style="width:8.5rem"><col><col style="width:12.5rem"></colgroup>`;
+}
 
 function groupItems(list) {
   const map = new Map();
   list.forEach(it => { if (!map.has(it.name)) map.set(it.name, []); map.get(it.name).push(it); });
   return map;
 }
+
+// 위쪽 입력칸: 구분이 '구매'일 때만 렌탈 체크박스 보이기
+function syncRentOpt() {
+  const ex = items.find(i => i.name === $('fName').value.trim());
+  const cat = ex ? ex.cat : $('fCat').value;
+  $('fRentWrap').style.display = cat === '구매' ? '' : 'none';
+}
+$('fCat').addEventListener('change', syncRentOpt);
+$('fName').addEventListener('input', syncRentOpt);
 
 bindPhoneInput($('fContact'));
 $('btnAdd').onclick = () => {
@@ -314,8 +368,10 @@ $('btnAdd').onclick = () => {
   if (!data.name || !data.vendor) { alert('항목이랑 업체·제품은 꼭 입력해주세요.'); return; }
   const existing = items.find(i => i.name === data.name);
   if (existing) data.cat = existing.cat;
+  data.rental = data.cat === '구매' && $('fRental').checked;
   items.push({ id: newId(), selected: false, multi: isMulti(data.name), ...data });
   ['fVendor','fPrice','fContact','fLink','fMemo'].forEach(id => $(id).value = '');
+  $('fRental').checked = false;
   $('fVendor').focus();
   persist();
 };
@@ -330,7 +386,8 @@ function saveEdit() {
   if (!vendor) { alert('업체·제품은 비워둘 수 없어요.'); $('eVendor').focus(); return; }
   const data = {
     vendor, price: parsePrice($('ePrice').value), contact: formatPhone($('eContact').value.trim()),
-    link: normalizeLink($('eLink').value), memo: $('eMemo').value.trim()
+    link: normalizeLink($('eLink').value), memo: $('eMemo').value.trim(),
+    rental: $('eRental') ? $('eRental').checked : false
   };
   if (editingId === NEW_ID) {
     const group = items.filter(i => i.name === addingName);
@@ -359,6 +416,7 @@ function toggleSelect(id) {
   persist();
 }
 function unselect(id) { const it = items.find(i => i.id === id); if (it) { it.selected = false; persist(); } }
+function toggleRental(id, on) { const it = items.find(i => i.id === id); if (it) { it.rental = on; persist(); } }
 
 function toggleMulti(name, on) {
   const list = items.filter(i => i.name === name);
@@ -374,11 +432,12 @@ function toggleMulti(name, on) {
   persist();
 }
 
-function editRow(no, it) {
+function editRow(no, it, buy) {
   return `<tr class="editing">
     <td>${no}</td>
     <td><input id="eVendor" value="${esc(it.vendor)}" placeholder="업체·제품"></td>
-    <td><input id="ePrice" value="${it.price ? it.price.toLocaleString('ko-KR') : ''}" placeholder="금액" style="text-align:right"></td>
+    ${buy ? `<td class="ctr"><input type="checkbox" id="eRental" class="rent-cb" ${it.rental ? 'checked' : ''} title="렌탈(월 금액)"></td>` : ''}
+    <td><input id="ePrice" value="${it.price ? it.price.toLocaleString('ko-KR') : ''}" placeholder="${buy ? '금액 (렌탈이면 월)' : '금액'}" style="text-align:right"></td>
     <td><input id="eContact" value="${esc(it.contact)}" placeholder="연락처" inputmode="tel"></td>
     <td><input id="eLink" value="${esc(it.link)}" placeholder="링크"></td>
     <td><input id="eMemo" value="${esc(it.memo)}" placeholder="비고"></td>
@@ -437,6 +496,7 @@ function bindDrag() {
 function render() {
   pendingRemote = false;
   $('nameList').innerHTML = [...new Set(items.map(i => i.name))].map(n => `<option value="${esc(n)}">`).join('');
+  syncRentOpt();
 
   const groups = groupItems(items);
   const groupOrder = new Map([...groups.keys()].map((n, i) => [n, i]));
@@ -447,11 +507,14 @@ function render() {
     (CATS.indexOf(a.cat) - CATS.indexOf(b.cat)) ||
     (groupOrder.get(a.name) - groupOrder.get(b.name)) ||
     (posInGroup.get(a.id) - posInGroup.get(b.id)));
-  const total = selected.reduce((s, i) => s + i.price, 0);
+  const oneTime = selected.filter(i => !isRent(i));
+  const total = oneTime.reduce((s, i) => s + i.price, 0);
+  const rentTotal = selected.filter(isRent).reduce((s, i) => s + i.price, 0);
   const byCat = {};
-  selected.forEach(i => byCat[i.cat] = (byCat[i.cat] || 0) + i.price);
+  oneTime.forEach(i => byCat[i.cat] = (byCat[i.cat] || 0) + i.price);
   const waitCount = [...groups.values()].filter(g => !g.some(i => i.selected)).length;
   let html = `<div class="stat total"><div class="label">선택한 후보 총액</div><div class="value">${won(total)}</div></div>`;
+  if (rentTotal) html += `<div class="stat rent"><div class="label">월 렌탈료 (총액에서 제외)</div><div class="value">월 ${won(rentTotal)}</div></div>`;
   CATS.forEach(c => { if (byCat[c]) html += `<div class="stat"><div class="label">${c}</div><div class="value">${won(byCat[c])}</div></div>`; });
   html += `<div class="stat"><div class="label">미결정 항목</div><div class="value" style="color:${waitCount ? '#e74c3c' : '#27ae60'}">${waitCount}개 / 총 ${groups.size}개</div></div>`;
   $('summary').innerHTML = html;
@@ -461,7 +524,7 @@ function render() {
   } else {
     const selCount = {};
     selected.forEach(i => selCount[i.name] = (selCount[i.name] || 0) + 1);
-    let s = `<div class="mx-scroll"><table class="sel-table"><colgroup><col style="width:170px"><col style="width:13%"><col style="width:120px"><col style="width:185px"><col><col style="width:90px"></colgroup>
+    let s = `<div class="mx-scroll"><table class="sel-table"><colgroup><col style="width:12rem"><col style="width:var(--vw)"><col style="width:12rem"><col style="width:13.5rem"><col><col style="width:6.5rem"></colgroup>
       <tr><th>항목</th><th>업체·제품</th><th class="price">금액</th><th>연락처</th><th>비고</th><th></th></tr>`;
     let prev = null;
     selected.forEach(it => {
@@ -470,7 +533,8 @@ function render() {
         ? `<span class="badge b-${esc(it.cat)}">${esc(it.cat)}</span>${esc(it.name)}${selCount[it.name] > 1 ? `<span class="sel-count">${selCount[it.name]}개</span>` : ''}`
         : '';
       s += `<tr class="${first ? 'sel-first' : 'sel-cont'}"><td>${nameCell}</td>
-        <td>${esc(it.vendor)}</td><td class="price">${it.price ? won(it.price) : '-'}</td>
+        <td class="vendor" title="${esc(it.vendor)}">${esc(it.vendor)}</td>
+        <td class="price">${isRent(it) ? '<span class="rent-tag">렌탈</span>' : ''}${priceText(it)}</td>
         <td class="nowrap">${contactCell(it.contact)}</td>
         <td class="memo">${esc(it.memo)}</td>
         <td class="btns"><button class="btn-small btn-gray" onclick="unselect('${it.id}')">선택해제</button></td></tr>`;
@@ -484,19 +548,24 @@ function render() {
     const selN = list.filter(i => i.selected).length;
     const done = selN > 0;
     const multi = list.some(i => i.multi);
+    const buy = list[0].cat === '구매';
     if (fc && !list.some(i => i.cat === fc)) return;
     if (fs === 'wait' && done) return;
     if (fs === 'done' && !done) return;
     if (q && !list.some(i => [i.name, i.vendor, i.memo, i.contact, i.link].join(' ').toLowerCase().includes(q))) return;
 
-    const prices = list.map(i => i.price).filter(p => p > 0);
-    const min = prices.length ? Math.min(...prices) : null;
+    // 일시불과 렌탈(월)은 따로 최저가 비교
+    const oneP = list.filter(i => !isRent(i)).map(i => i.price).filter(p => p > 0);
+    const rentP = list.filter(isRent).map(i => i.price).filter(p => p > 0);
+    const minOne = oneP.length ? Math.min(...oneP) : null;
+    const minRent = rentP.length ? Math.min(...rentP) : null;
+    const minText = (minOne !== null ? ' · 최저 ' + won(minOne) : '') + (minRent !== null ? ' · 렌탈 최저 월 ' + won(minRent) : '');
     const isAddingHere = editingId === NEW_ID && addingName === name;
     const statusText = selN === 0 ? '미결정' : selN === 1 ? '✔ 결정완료' : `✔ 선택 ${selN}개`;
     out += `<div class="group" data-name="${esc(name)}">
       <div class="group-head" draggable="true" title="드래그해서 순서 변경">
         <div><span class="drag-handle">⠿</span><span class="badge b-${esc(list[0].cat)}">${esc(list[0].cat)}</span><span class="title">${esc(name)}</span>
-          <span style="color:#888;font-size:13px"> · 후보 ${list.length}개${min !== null ? ' · 최저 ' + won(min) : ''}</span></div>
+          <span class="meta"> · 후보 ${list.length}개${minText}</span></div>
         <div class="head-right">
           <div class="${done ? 'status-done' : 'status-wait'}">${statusText}</div>
           <label class="multi-toggle ${multi ? 'on' : ''}" title="여러 후보를 함께 선택할 수 있어요 (예: 방마다 다른 커튼)">
@@ -504,15 +573,18 @@ function render() {
           </label>
         </div>
       </div>
-      <div class="mx-scroll"><table>${COLS}<tr><th>후보</th><th>업체·제품</th><th class="price">금액</th><th>연락처</th><th>링크</th><th>비고</th><th></th></tr>`;
+      <div class="mx-scroll"><table>${cols(buy)}<tr><th>후보</th><th>업체·제품</th>${buy ? '<th class="ctr">렌탈</th>' : ''}<th class="price">금액</th><th>연락처</th><th>링크</th><th>비고</th><th></th></tr>`;
     list.forEach((it, idx) => {
-      if (it.id === editingId) { out += editRow(idx + 1, it); return; }
-      const isMin = min !== null && it.price === min && prices.length > 1;
+      if (it.id === editingId) { out += editRow(idx + 1, it, buy); return; }
+      const r = isRent(it);
+      const isMin = r ? (minRent !== null && it.price === minRent && rentP.length > 1)
+                      : (minOne !== null && it.price === minOne && oneP.length > 1);
       const selLabel = multi ? (it.selected ? '☑ 선택됨' : '☐ 선택') : (it.selected ? '선택됨' : '선택');
       out += `<tr class="${it.selected ? 'selected' : ''}">
         <td>${idx + 1}</td>
-        <td>${it.selected ? '⭐ ' : ''}${esc(it.vendor)}</td>
-        <td class="price">${isMin ? '<span class="cheap">최저</span>' : ''}${it.price ? won(it.price) : '-'}</td>
+        <td class="vendor" title="${esc(it.vendor)}">${it.selected ? '⭐ ' : ''}${esc(it.vendor)}</td>
+        ${buy ? `<td class="ctr"><input type="checkbox" class="rent-cb" data-rent="${it.id}" ${it.rental ? 'checked' : ''} title="렌탈(월 금액)"></td>` : ''}
+        <td class="price">${isMin ? '<span class="cheap">최저</span>' : ''}${priceText(it)}</td>
         <td class="nowrap">${contactCell(it.contact)}</td>
         <td class="nowrap">${linkCell(it.link)}</td>
         <td class="memo">${esc(it.memo)}</td>
@@ -522,7 +594,7 @@ function render() {
           <button class="btn-small btn-red" onclick="deleteItem('${it.id}')">삭제</button>
         </td></tr>`;
     });
-    if (isAddingHere) out += editRow(list.length + 1, { vendor: '', price: 0, contact: '', link: '', memo: '' });
+    if (isAddingHere) out += editRow(list.length + 1, { vendor: '', price: 0, contact: '', link: '', memo: '', rental: false }, buy);
     out += `</table></div>`;
     if (!isAddingHere) out += `<div class="group-foot"><button class="add-row-btn" data-add="${esc(name)}">+ ${esc(name)} 후보 추가</button></div>`;
     out += `</div>`;
@@ -531,6 +603,7 @@ function render() {
 
   document.querySelectorAll('[data-add]').forEach(b => b.onclick = () => startAdd(b.dataset.add));
   document.querySelectorAll('[data-multi]').forEach(cb => cb.onchange = () => toggleMulti(cb.dataset.multi, cb.checked));
+  document.querySelectorAll('[data-rent]').forEach(cb => cb.onchange = () => toggleRental(cb.dataset.rent, cb.checked));
   document.querySelectorAll('.multi-toggle').forEach(l => l.addEventListener('pointerdown', () => noDrag = true));
   bindDrag();
 
@@ -565,7 +638,7 @@ function shopTyping() {
 }
 window.applyShop = data => {
   shops = migrateShop(data);
-  if (shopTyping()) { pendingShop = true; return; } // 입력 중이면 화면 갱신 미룸
+  if (shopTyping()) { pendingShop = true; return; }
   renderShop();
 };
 function persistShop(doRender = true) {
@@ -707,9 +780,9 @@ $('tab-shop').addEventListener('focusout', () => setTimeout(() => {
 //  내보내기 / 백업 (견적 + 살 것 메모 함께)
 // ===================================================================
 $('btnCsv').onclick = () => {
-  const rows = [['구분','항목','후보','업체·제품','금액','연락처','링크','비고','선택']];
+  const rows = [['구분','항목','후보','업체·제품','금액','렌탈(월)','연락처','링크','비고','선택']];
   groupItems(items).forEach((list, name) => list.forEach((it, idx) =>
-    rows.push([it.cat, name, idx + 1, it.vendor, it.price, it.contact, it.link, it.memo, it.selected ? 'O' : ''])));
+    rows.push([it.cat, name, idx + 1, it.vendor, it.price, isRent(it) ? 'O' : '', it.contact, it.link, it.memo, it.selected ? 'O' : ''])));
   const csv = rows.map(r => r.map(v => `"${String(v ?? '').replace(/"/g, '""')}"`).join(',')).join('\r\n');
   download('\uFEFF' + csv, '이사준비_견적비교.csv', 'text/csv;charset=utf-8');
 };
@@ -722,7 +795,7 @@ $('fileInput').onchange = e => {
   reader.onload = () => {
     try {
       const data = JSON.parse(reader.result);
-      const isOld = Array.isArray(data);               // 예전 백업 (견적만)
+      const isOld = Array.isArray(data);
       const qItems = isOld ? data : data.items;
       if (!Array.isArray(qItems)) throw 0;
       const sh = isOld ? null : migrateShop(data.shopping);
