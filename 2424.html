@@ -21,6 +21,7 @@
   .form-grid .rent-opt { display: inline-flex; align-items: center; gap: 3px; margin: 0 0 0 6px; color: #1a5fd0; cursor: pointer; }
   input, select { width: 100%; padding: 7px 8px; border: 1px solid #ccc; border-radius: 6px; font-size: 1rem; font-family: inherit; }
   input[type=checkbox] { width: auto; padding: 0; margin: 0; cursor: pointer; }
+  input.rent-cb { width: 15px; height: 15px; vertical-align: middle; }
   button, .btn { padding: 7px 13px; border: none; border-radius: 6px; cursor: pointer; font-size: 1rem; font-family: inherit; text-decoration: none; display: inline-block; }
   .btn-primary { background: #2d7ff9; color: #fff; }
   .btn-gray { background: #e3e6ea; color: #333; }
@@ -56,7 +57,7 @@
 
   .cheap { display: inline-block; font-size: .8rem; color: #1e8449; background: #e3f6ea; padding: 1px 6px; border-radius: 8px; margin-right: 6px; }
   .rent-tag { display: inline-block; font-size: .8rem; color: #1a5fd0; background: #e8f0fe; padding: 1px 6px; border-radius: 8px; margin-right: 6px; }
-  .rent-chip { display: inline-flex; align-items: center; gap: 3px; font-size: .8rem; padding: 1px 7px; border: 1px solid #d8dde3; border-radius: 10px; color: #888; background: #fff; margin-right: 6px; cursor: pointer; vertical-align: middle; white-space: nowrap; }
+  .rent-chip { display: inline-flex; align-items: center; gap: 3px; font-size: .8rem; padding: 1px 7px; border: 1px solid #d8dde3; border-radius: 10px; color: #888; background: #fff; cursor: pointer; vertical-align: middle; white-space: nowrap; }
   .rent-chip.on { border-color: #2d7ff9; color: #1a5fd0; background: #e8f0fe; }
   .rent-chip input { width: 13px; height: 13px; }
   .price-edit { display: flex; align-items: center; gap: 4px; }
@@ -74,7 +75,12 @@
   td.btns, td.nowrap { white-space: nowrap; }
   td.btns { text-align: right; }
   td.vendor { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  td.no { color: #999; }
+  td.no, th.no { color: #999; text-align: center; padding-left: 4px; padding-right: 4px; }
+  td.star, th.star { text-align: center; padding-left: 0; padding-right: 0; color: #f5a623; }
+  td.rentc, th.rentc { text-align: center; padding-left: 0; padding-right: 0; }
+  /* 세로선 (연한 회색) */
+  .qt th, .qt td, .sel-table th, .sel-table td { border-left: 1px solid #e5e7eb; }
+  .qt th:first-child, .qt td:first-child, .sel-table th:first-child, .sel-table td:first-child { border-left: none; }
   .qt thead th { position: sticky; top: 0; z-index: 2; border-bottom: 1px solid #e3e6ea; }
   .qt tr.ghead td { background: #f0f3f7; border-top: 10px solid #fff; padding: 8px 12px; cursor: grab; user-select: none; }
   .qt tr.ghead:active td { cursor: grabbing; }
@@ -99,12 +105,14 @@
   .citem { padding: 8px 10px; border-top: 1px solid #eee; }
   .citem.selected { background: #eaf3ff; }
   .citem.editing { background: #fffbe6; }
-  .c1 { display: flex; align-items: center; gap: 8px; }
-  .cno { color: #999; width: 1.2rem; flex: none; }
+  .c1 { display: flex; align-items: center; gap: 6px; }
+  .cno { color: #999; width: 1.2rem; flex: none; text-align: center; }
+  .cstar { width: 1rem; flex: none; text-align: center; color: #f5a623; }
   .cv { flex: 1; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-weight: bold; }
-  .cp { flex: none; white-space: nowrap; }
-  .cmemo { color: #666; font-size: .92rem; margin: 4px 0 0 2rem; white-space: pre-wrap; overflow-wrap: anywhere; }
-  .c2 { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin: 6px 0 0 2rem; }
+  .crent { flex: none; }
+  .cp { flex: none; white-space: nowrap; min-width: 8.5rem; text-align: right; }
+  .cmemo { color: #666; font-size: .92rem; margin: 4px 0 0 3.2rem; white-space: pre-wrap; overflow-wrap: anywhere; }
+  .c2 { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin: 6px 0 0 3.2rem; }
   .cextra { display: flex; flex-wrap: wrap; align-items: center; gap: 4px; }
   .cbtns { margin-left: auto; display: flex; gap: 4px; }
   .egrid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
@@ -495,9 +503,17 @@ function headHTML(name, list, g) {
       </label>
     </div></div>`;
 }
+// 금액 (최저 배지 + 금액) — 렌탈 체크는 따로 그림
 function priceCell(it, g) {
-  const chip = g.buy ? `<label class="rent-chip ${it.rental ? 'on' : ''}" title="렌탈이면 체크 (금액은 월 금액)"><input type="checkbox" data-rent="${it.id}" ${it.rental ? 'checked' : ''}>렌탈</label>` : '';
-  return chip + (isMinOf(it, g) ? '<span class="cheap">최저</span>' : '') + priceText(it);
+  return (isMinOf(it, g) ? '<span class="cheap">최저</span>' : '') + priceText(it);
+}
+// PC 표용 렌탈 체크박스 (렌탈 칸 가운데)
+function rentBox(it) {
+  return `<input type="checkbox" class="rent-cb" data-rent="${it.id}" ${it.rental ? 'checked' : ''} title="렌탈이면 체크 (금액은 월 금액)">`;
+}
+// 폰 카드용 렌탈 칩
+function rentChip(it) {
+  return `<label class="rent-chip ${it.rental ? 'on' : ''}" title="렌탈이면 체크 (금액은 월 금액)"><input type="checkbox" data-rent="${it.id}" ${it.rental ? 'checked' : ''}>렌탈</label>`;
 }
 function rentEdit(it) {
   return `<label class="rent-chip ${it.rental ? 'on' : ''}"><input type="checkbox" id="eRental" ${it.rental ? 'checked' : ''} onchange="this.parentElement.classList.toggle('on', this.checked)">렌탈</label>`;
@@ -511,11 +527,14 @@ function rowBtns(it, g) {
 const EMPTY_ITEM = { vendor: '', price: 0, contact: '', link: '', memo: '', rental: false };
 
 // ---------- PC: 한 표 ----------
+const COLS = 9;
 function editRow(no, it, buy) {
   return `<tr class="editing">
     <td class="no">${no}</td>
+    <td class="star"></td>
     <td><input id="eVendor" value="${esc(it.vendor)}" placeholder="업체·제품"></td>
-    <td><div class="price-edit">${buy ? rentEdit(it) : ''}<input id="ePrice" value="${it.price ? it.price.toLocaleString('ko-KR') : ''}" placeholder="${buy ? '금액(렌탈은 월)' : '금액'}" style="text-align:right"></div></td>
+    <td class="rentc">${buy ? `<input type="checkbox" class="rent-cb" id="eRental" ${it.rental ? 'checked' : ''} title="렌탈이면 체크">` : ''}</td>
+    <td><input id="ePrice" value="${it.price ? it.price.toLocaleString('ko-KR') : ''}" placeholder="${buy ? '금액(렌탈은 월)' : '금액'}" style="text-align:right"></td>
     <td><input id="eContact" value="${esc(it.contact)}" placeholder="연락처" inputmode="tel"></td>
     <td><input id="eLink" value="${esc(it.link)}" placeholder="링크"></td>
     <td><input id="eMemo" value="${esc(it.memo)}" placeholder="비고"></td>
@@ -525,17 +544,22 @@ function editRow(no, it, buy) {
     </td></tr>`;
 }
 function tableHTML(vis) {
-  let h = `<table class="qt"><colgroup><col style="width:3rem"><col style="width:var(--vw)"><col style="width:14rem"><col style="width:12.5rem"><col style="width:8rem"><col><col style="width:12.5rem"></colgroup>
-    <thead><tr><th>후보</th><th>업체·제품</th><th class="price">금액</th><th>연락처</th><th>링크</th><th>비고</th><th></th></tr></thead>`;
+  let h = `<table class="qt"><colgroup>
+      <col style="width:3rem"><col style="width:1.8rem"><col style="width:var(--vw)"><col style="width:3.5rem">
+      <col style="width:11rem"><col style="width:12.5rem"><col style="width:8rem"><col><col style="width:12.5rem">
+    </colgroup>
+    <thead><tr><th class="no">후보</th><th class="star" title="선택 표시"></th><th>업체·제품</th><th class="rentc">렌탈</th><th class="price">금액</th><th>연락처</th><th>링크</th><th>비고</th><th></th></tr></thead>`;
   vis.forEach(([name, list]) => {
     const g = groupInfo(list, name);
     h += `<tbody class="group" data-name="${esc(name)}">
-      <tr class="ghead" draggable="true" title="드래그해서 순서 변경"><td colspan="7">${headHTML(name, list, g)}</td></tr>`;
+      <tr class="ghead" draggable="true" title="드래그해서 순서 변경"><td colspan="${COLS}">${headHTML(name, list, g)}</td></tr>`;
     list.forEach((it, idx) => {
       if (it.id === editingId) { h += editRow(idx + 1, it, g.buy); return; }
       h += `<tr class="${it.selected ? 'selected' : ''}">
         <td class="no">${idx + 1}</td>
-        <td class="vendor" title="${esc(it.vendor)}">${it.selected ? '⭐ ' : ''}${esc(it.vendor)}</td>
+        <td class="star">${it.selected ? '★' : ''}</td>
+        <td class="vendor" title="${esc(it.vendor)}">${esc(it.vendor)}</td>
+        <td class="rentc">${g.buy ? rentBox(it) : ''}</td>
         <td class="price">${priceCell(it, g)}</td>
         <td class="nowrap">${contactCell(it.contact)}</td>
         <td class="nowrap">${linkCell(it.link)}</td>
@@ -543,7 +567,7 @@ function tableHTML(vis) {
         <td class="btns">${rowBtns(it, g)}</td></tr>`;
     });
     h += g.adding ? editRow(list.length + 1, EMPTY_ITEM, g.buy)
-      : `<tr class="addrow"><td colspan="7"><button class="add-row-btn" data-add="${esc(name)}">+ ${esc(name)} 후보 추가</button></td></tr>`;
+      : `<tr class="addrow"><td colspan="${COLS}"><button class="add-row-btn" data-add="${esc(name)}">+ ${esc(name)} 후보 추가</button></td></tr>`;
     h += `</tbody>`;
   });
   return h + `</table>`;
@@ -568,7 +592,9 @@ function itemCard(it, idx, g) {
   const extra = contactCell(it.contact) + linkCell(it.link);
   return `<div class="citem ${it.selected ? 'selected' : ''}">
     <div class="c1"><span class="cno">${idx + 1}</span>
-      <span class="cv" title="${esc(it.vendor)}">${it.selected ? '⭐ ' : ''}${esc(it.vendor)}</span>
+      <span class="cstar">${it.selected ? '★' : ''}</span>
+      <span class="cv" title="${esc(it.vendor)}">${esc(it.vendor)}</span>
+      ${g.buy ? `<span class="crent">${rentChip(it)}</span>` : ''}
       <span class="cp">${priceCell(it, g)}</span></div>
     ${it.memo ? `<div class="cmemo">${esc(it.memo)}</div>` : ''}
     <div class="c2"><div class="cextra">${extra}</div><div class="cbtns">${rowBtns(it, g)}</div></div>
