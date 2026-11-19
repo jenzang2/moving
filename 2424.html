@@ -36,6 +36,8 @@
   .stat .value { font-size: 1.38rem; font-weight: bold; margin-top: 4px; }
   .stat.total .value { color: #2d7ff9; }
   .stat.rent .value { color: #1a5fd0; }
+  .stat.plus .value { color: #27ae60; }
+  .stat.minus .value { color: #e74c3c; }
   .sel-title { font-size: .92rem; color: #777; margin: 14px 0 6px; }
   .sel-empty { font-size: .92rem; color: #aaa; padding: 10px 0; }
   .toolbar { display: flex; gap: 8px; margin-bottom: 12px; flex-wrap: wrap; }
@@ -78,12 +80,9 @@
   td.no, th.no { color: #999; text-align: center; padding-left: 2px; padding-right: 2px; }
   td.star, th.star { text-align: center; padding-left: 0; padding-right: 0; color: #f5a623; }
   td.rentc, th.rentc { text-align: center; padding-left: 0; padding-right: 0; }
-  /* 세로선 (연한 회색) */
   .qt th, .qt td, .sel-table th, .sel-table td { border-left: 1px solid #e5e7eb; }
   .qt th:first-child, .qt td:first-child, .sel-table th:first-child, .sel-table td:first-child { border-left: none; }
-  /* 별 칸과 업체 칸 사이는 선 없음 */
   .qt td.star + td, .qt th.star + th { border-left: none; padding-left: 2px; }
-  /* 렌탈 체크된 칸 강조 */
   .qt td.rentc.on { background: #dbe8ff; }
   .qt thead th { position: sticky; top: 0; z-index: 2; border-bottom: 1px solid #e3e6ea; }
   .qt tr.ghead td { background: #f0f3f7; border-top: 10px solid #fff; padding: 8px 12px; cursor: grab; user-select: none; }
@@ -99,7 +98,7 @@
   .sel-table td { background: #f8fbff; }
   .sel-table tr.sel-cont td { border-top: 1px dashed #e6eaf0; }
   .sel-table tr.sel-cont td:first-child { border-top: none; }
-  .sel-count { color: #888; font-size: .85rem; margin-left: 4px; }
+  .sel-count { color: #888; font-size: .85rem; margin-left: 4px; font-weight: normal; }
 
   /* ===== 폰: 카드형 보기 ===== */
   .cgroup { border: 1px solid #e3e6ea; border-radius: 8px; margin-bottom: 10px; overflow: hidden; }
@@ -162,13 +161,46 @@
   .add-line input { flex: 1; min-width: 0; }
   .link-btn { background: none; color: #888; font-size: .85rem; padding: 6px 2px 0; text-decoration: underline; }
 
+  /* ===== 잔금 정리 ===== */
+  .sx { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  .st { min-width: 680px; }
+  .st th, .st td { border-left: 1px solid #e5e7eb; padding: 5px 7px; }
+  .st th:first-child, .st td:first-child { border-left: none; }
+  .st input, .st select { padding: 5px 6px; font-size: .95rem; }
+  .st input.money { text-align: right; }
+  .st tfoot td { background: #f8f9fb; font-weight: bold; border-top: 2px solid #e3e6ea; }
+  .st td.calc { text-align: right; white-space: nowrap; color: #1a5fd0; font-weight: bold; }
+  .st td.calc.neg { color: #e74c3c; }
+  .st td.del { text-align: center; padding: 0; }
+  .card-head { display: flex; justify-content: space-between; align-items: center; gap: 8px; margin-bottom: 10px; flex-wrap: wrap; }
+  .card-head h2 { margin: 0; }
+  .hint { font-size: .85rem; color: #888; line-height: 1.55; margin: 8px 0 0; }
+  .row-check { display: flex; align-items: center; gap: 6px; margin-top: 10px; font-size: .95rem; cursor: pointer; }
+  .row-check input { width: 16px; height: 16px; accent-color: #2d7ff9; }
+  .flow { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-top: 12px; }
+  .flow-box { background: #f8f9fb; border-radius: 8px; padding: 10px 12px; }
+  .flow-box h3 { margin: 0 0 6px; font-size: 1rem; }
+  .fl { display: flex; justify-content: space-between; gap: 10px; padding: 3px 0; font-size: .95rem; }
+  .fl .v { white-space: nowrap; }
+  .fl.muted { color: #aaa; }
+  .fl.minus .v { color: #e74c3c; }
+  .fl.sub { border-top: 1px solid #e3e6ea; margin-top: 4px; padding-top: 6px; font-weight: bold; }
+  .tax-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .tax-in .lbl { font-size: .85rem; color: #666; margin-bottom: 3px; }
+  .tax-in .inline { display: flex; gap: 6px; align-items: center; }
+  .tax-in .inline input { flex: 1; min-width: 0; text-align: right; }
+  .tax-in label.row { display: flex; align-items: center; gap: 6px; margin: 10px 0 4px; font-size: .95rem; cursor: pointer; }
+  .tax-in label.row input { width: 16px; height: 16px; accent-color: #2d7ff9; }
+  .tax-in .sub-in { margin-left: 1.6rem; }
+
   @media (max-width: 900px) { .form-grid { grid-template-columns: 1fr 1fr; } }
   @media (max-width: 700px) {
     header { row-gap: 8px; }
     header h1 { flex: 1 0 100%; }
     main { padding: 12px; }
-    .tab { flex: 1; padding: 9px 8px; }
+    .tab { flex: 1; padding: 9px 6px; }
     .view-ctl { margin-left: 0; width: 100%; justify-content: flex-end; }
+    .flow, .tax-grid { grid-template-columns: 1fr; }
   }
 </style>
 </head>
@@ -191,6 +223,7 @@
   <div class="tabs">
     <button class="tab" data-tab="quote">📋 견적 비교</button>
     <button class="tab" data-tab="shop" id="tabShopBtn">🛒 살 것 메모</button>
+    <button class="tab" data-tab="settle">💰 잔금 정리</button>
     <div class="view-ctl">
       <span>글자</span>
       <button data-view="fs" data-d="-1" title="글자 작게">가−</button>
@@ -252,6 +285,43 @@
       </div>
     </div>
     <div id="shopList" class="shop-grid"></div>
+  </div>
+
+  <!-- ===================== 탭3: 잔금 정리 ===================== -->
+  <div id="tab-settle" style="display:none">
+    <div class="card">
+      <h2>💰 최종 정리</h2>
+      <div id="settleSummary"></div>
+      <p class="hint">남는 돈 = (내 돈 + 대출) − (분양 잔금 + 중도금대출 상환 + 취득세 + 기타 비용). 아래 칸을 고치면 바로 다시 계산돼요.</p>
+    </div>
+
+    <div class="card">
+      <div class="card-head"><h2>① 분양 대금</h2><button class="btn-small btn-gray" data-act="sadd" data-sec="contract">+ 줄 추가</button></div>
+      <div class="sx" id="secContract"></div>
+      <label class="row-check"><input type="checkbox" id="optRepay" data-sec="opt" data-f="repayMid"> 입주 때 중도금대출을 갚아요 (보통 잔금대출로 갈아타면서 상환)</label>
+      <p class="hint">총액은 계약서 금액이에요. '이미 낸 돈'에는 계약금·중도금 중 우리 돈으로 낸 것을, '중도금대출로 냄'에는 집단대출이 대신 낸 금액을 넣어요. 남은 잔금 = 총액 − 이미 낸 돈 − 중도금대출이에요.</p>
+    </div>
+
+    <div class="card">
+      <div class="card-head"><h2>② 취득세</h2></div>
+      <div id="secTax"></div>
+    </div>
+
+    <div class="card">
+      <div class="card-head"><h2>③ 대출</h2><button class="btn-small btn-gray" data-act="sadd" data-sec="loans">+ 대출 추가</button></div>
+      <div class="sx" id="secLoans"></div>
+      <p class="hint">월 상환액은 첫 달 기준이에요 (원금균등은 갈수록 줄어요). 거치기간, 변동금리, 중도상환은 반영되지 않아요.</p>
+    </div>
+
+    <div class="card">
+      <div class="card-head"><h2>④ 내 돈 (자기자금)</h2><button class="btn-small btn-gray" data-act="sadd" data-sec="funds">+ 줄 추가</button></div>
+      <div class="sx" id="secFunds"></div>
+    </div>
+
+    <div class="card">
+      <div class="card-head"><h2>⑤ 입주 때 드는 기타 비용</h2><button class="btn-small btn-gray" data-act="sadd" data-sec="costs">+ 줄 추가</button></div>
+      <div class="sx" id="secCosts"></div>
+    </div>
   </div>
 
 </main>
@@ -336,8 +406,9 @@ async function copyText(text) {
 document.addEventListener('click', e => { const b = e.target.closest('[data-copy]'); if (b) copyText(b.dataset.copy); });
 
 // ---------- 탭 ----------
+const TABS = ['quote', 'shop', 'settle'];
 function showTab(t) {
-  ['quote', 'shop'].forEach(k => {
+  TABS.forEach(k => {
     $('tab-' + k).style.display = k === t ? '' : 'none';
     document.querySelector(`[data-tab="${k}"]`).classList.toggle('active', k === t);
   });
@@ -395,7 +466,6 @@ function groupItems(list) {
   return map;
 }
 
-// 위쪽 입력칸: 구분이 '구매'일 때만 렌탈 체크박스 보이기
 function syncRentOpt() {
   const ex = items.find(i => i.name === $('fName').value.trim());
   const cat = ex ? ex.cat : $('fCat').value;
@@ -478,7 +548,6 @@ function toggleMulti(name, on) {
   persist();
 }
 
-// ---------- 그룹 정보 / 공통 조각 ----------
 function groupInfo(list, name) {
   const selN = list.filter(i => i.selected).length;
   const oneP = list.filter(i => !isRent(i)).map(i => i.price).filter(p => p > 0);
@@ -508,15 +577,12 @@ function headHTML(name, list, g) {
       </label>
     </div></div>`;
 }
-// 금액 (최저 배지 + 금액)
 function priceCell(it, g) {
   return (isMinOf(it, g) ? '<span class="cheap">최저</span>' : '') + priceText(it);
 }
-// PC 표용 렌탈 체크박스
 function rentBox(it) {
   return `<input type="checkbox" class="rent-cb" data-rent="${it.id}" ${it.rental ? 'checked' : ''} title="렌탈이면 체크 (금액은 월 금액)">`;
 }
-// 폰 카드용 렌탈 칩
 function rentChip(it) {
   return `<label class="rent-chip ${it.rental ? 'on' : ''}" title="렌탈이면 체크 (금액은 월 금액)"><input type="checkbox" data-rent="${it.id}" ${it.rental ? 'checked' : ''}>렌탈</label>`;
 }
@@ -531,7 +597,6 @@ function rowBtns(it, g) {
 }
 const EMPTY_ITEM = { vendor: '', price: 0, contact: '', link: '', memo: '', rental: false };
 
-// ---------- PC: 한 표 ----------
 const COLS = 9;
 function editRow(no, it, buy) {
   return `<tr class="editing">
@@ -578,7 +643,6 @@ function tableHTML(vis) {
   return h + `</table>`;
 }
 
-// ---------- 폰: 카드형 ----------
 function editCard(no, it, buy) {
   return `<div class="citem editing">
     <div class="egrid">
@@ -616,7 +680,6 @@ function cardsHTML(vis) {
   }).join('');
 }
 
-// ---------- 드래그로 항목 순서 변경 ----------
 function moveGroup(from, to, after) {
   if (from === to) return;
   const moving = items.filter(i => i.name === from);
@@ -663,7 +726,6 @@ function bindDrag() {
   });
 }
 
-// ---------- 화면 그리기 ----------
 function render() {
   pendingRemote = false;
   $('nameList').innerHTML = [...new Set(items.map(i => i.name))].map(n => `<option value="${esc(n)}">`).join('');
@@ -674,7 +736,6 @@ function render() {
   const posInGroup = new Map();
   groups.forEach(list => list.forEach((it, i) => posInGroup.set(it.id, i)));
 
-  // 요약
   const selected = items.filter(i => i.selected).sort((a, b) =>
     (CATS.indexOf(a.cat) - CATS.indexOf(b.cat)) ||
     (groupOrder.get(a.name) - groupOrder.get(b.name)) ||
@@ -691,7 +752,6 @@ function render() {
   html += `<div class="stat"><div class="label">미결정 항목</div><div class="value" style="color:${waitCount ? '#e74c3c' : '#27ae60'}">${waitCount}개 / 총 ${groups.size}개</div></div>`;
   $('summary').innerHTML = html;
 
-  // 선택한 후보 목록 (같은 항목끼리 붙음)
   const selCount = {};
   selected.forEach(i => selCount[i.name] = (selCount[i.name] || 0) + 1);
   const nameHTML = it => `<span class="badge b-${esc(it.cat)}">${esc(it.cat)}</span>${esc(it.name)}${selCount[it.name] > 1 ? `<span class="sel-count">${selCount[it.name]}개</span>` : ''}`;
@@ -725,7 +785,6 @@ function render() {
     $('selectedList').innerHTML = s + '</table>';
   }
 
-  // 목록
   const fc = $('filterCat').value, fs = $('filterStatus').value, q = $('search').value.trim().toLowerCase();
   const vis = [];
   groups.forEach((list, name) => {
@@ -915,7 +974,290 @@ $('tab-shop').addEventListener('focusout', () => setTimeout(() => {
 }, 0));
 
 // ===================================================================
-//  내보내기 / 백업 (견적 + 살 것 메모 함께)
+//  탭3: 잔금 정리
+// ===================================================================
+const fmtNum = n => n ? Number(n).toLocaleString('ko-KR') : '';
+const simpleRow = (name, memo = '') => ({ id: newId(), name, amount: 0, memo });
+const contractRow = (name, memo = '') => ({ id: newId(), name, total: 0, paid: 0, midLoan: 0, memo });
+const loanRow = (name = '') => ({ id: newId(), name, amount: 0, rate: 4, years: 30, method: 'eq', memo: '' });
+const TAX_DEFAULT = { base: 0, baseAuto: true, over85: false, first: false, firstCap: 2000000, manualOn: false, manual: 0 };
+
+function defaultSettle() {
+  return {
+    contract: [contractRow('분양가', '계약금 10% / 중도금 60% / 잔금 30% 등'), contractRow('옵션', '시스템에어컨, 가전 등'), contractRow('발코니 확장비')],
+    tax: { ...TAX_DEFAULT },
+    loans: [loanRow('잔금대출')],
+    funds: [simpleRow('보유 현금'), simpleRow('전세보증금 돌려받는 돈')],
+    costs: [simpleRow('중도금대출 이자 (후불제)'), simpleRow('선수관리비 (관리비 예치금)'), simpleRow('법무사·등기 비용'), simpleRow('국민주택채권 할인'), simpleRow('대출 인지세·부대비용')],
+    repayMid: true
+  };
+}
+function migrateSettle(d) {
+  if (!d) return defaultSettle();
+  const num = v => Number(v) || 0;
+  const t = d.tax || {};
+  const simple = a => toArr(a).filter(Boolean).map(x => ({ id: String(x.id || newId()), name: x.name || '', amount: num(x.amount), memo: x.memo || '' }));
+  return {
+    contract: toArr(d.contract).filter(Boolean).map(x => ({ id: String(x.id || newId()), name: x.name || '', total: num(x.total), paid: num(x.paid), midLoan: num(x.midLoan), memo: x.memo || '' })),
+    tax: {
+      base: num(t.base), baseAuto: t.baseAuto !== false, over85: !!t.over85, first: !!t.first,
+      firstCap: t.firstCap == null ? 2000000 : num(t.firstCap), manualOn: !!t.manualOn, manual: num(t.manual)
+    },
+    loans: toArr(d.loans).filter(Boolean).map(x => ({
+      id: String(x.id || newId()), name: x.name || '', amount: num(x.amount), rate: num(x.rate), years: num(x.years),
+      method: ['eq', 'prin', 'bullet'].includes(x.method) ? x.method : 'eq', memo: x.memo || ''
+    })),
+    funds: simple(d.funds), costs: simple(d.costs),
+    repayMid: d.repayMid !== false
+  };
+}
+let settle = defaultSettle();
+let pendingSettle = false;
+
+function settleTyping() {
+  const a = document.activeElement;
+  return !!(a && a.closest && a.closest('#tab-settle') && a.tagName === 'INPUT' && a.type !== 'checkbox');
+}
+window.applySettle = data => {
+  settle = migrateSettle(data);
+  if (settleTyping()) { pendingSettle = true; return; }
+  renderSettle();
+};
+function saveSettle() {
+  if (window.cloudSaveSettle) window.cloudSaveSettle(settle);
+  else alert('아직 서버에 연결되지 않았어요. 잠시 후 다시 시도해 주세요.');
+}
+
+// 주택 유상취득 세율 (1주택 기준, % 단위)
+function taxRatePct(base) {
+  if (base <= 600000000) return 1;
+  if (base > 900000000) return 3;
+  return Math.round((base / 100000000 * 2 / 3 - 3) * 100) / 100;
+}
+function loanCalc(l) {
+  const P = l.amount, n = Math.round(l.years * 12), r = l.rate / 100 / 12;
+  let monthly = 0, interest = 0;
+  if (P > 0 && n > 0) {
+    if (l.method === 'bullet') { monthly = P * r; interest = P * r * n; }
+    else if (l.method === 'prin') { monthly = P / n + P * r; interest = P * r * (n + 1) / 2; }
+    else { monthly = r ? P * r / (1 - Math.pow(1 + r, -n)) : P / n; interest = monthly * n - P; }
+  }
+  return { monthly: Math.round(monthly), interest: Math.round(interest) };
+}
+function calcSettle() {
+  const s = settle, sum = (a, f) => a.reduce((t, x) => t + (Number(x[f]) || 0), 0);
+  const contract = s.contract.map(r => ({ ...r, bal: r.total - r.paid - r.midLoan }));
+  const cTotal = sum(s.contract, 'total'), cPaid = sum(s.contract, 'paid'), cMid = sum(s.contract, 'midLoan');
+  const cBal = contract.reduce((t, r) => t + r.bal, 0);
+
+  const t = s.tax;
+  const base = t.baseAuto ? cTotal : t.base;
+  const pct = base > 0 ? taxRatePct(base) : 0;
+  const acq = Math.floor(base * pct / 100);
+  const deduct = t.first ? Math.min(acq, t.firstCap) : 0;
+  const edu = Math.floor(base * pct / 100 * 0.1);
+  const rural = t.over85 ? Math.floor(base * 0.002) : 0;
+  const autoTax = acq - deduct + edu + rural;
+  const taxTotal = t.manualOn ? t.manual : autoTax;
+
+  const loans = s.loans.map(l => ({ ...l, ...loanCalc(l) }));
+  const loanSum = sum(s.loans, 'amount');
+  const loanMon = loans.reduce((x, l) => x + l.monthly, 0);
+  const loanInt = loans.reduce((x, l) => x + l.interest, 0);
+  const fundsSum = sum(s.funds, 'amount'), costsSum = sum(s.costs, 'amount');
+  const midRepay = s.repayMid ? cMid : 0;
+  const inflow = fundsSum + loanSum;
+  const outflow = cBal + midRepay + taxTotal + costsSum;
+  return { contract, cTotal, cPaid, cMid, cBal, base, pct, acq, deduct, edu, rural, autoTax, taxTotal,
+           loans, loanSum, loanMon, loanInt, fundsSum, costsSum, midRepay, inflow, outflow, left: inflow - outflow };
+}
+
+const moneyIn = (sec, r, f) => `<input class="money" data-sec="${sec}" data-f="${f}" value="${fmtNum(r[f])}" placeholder="0" inputmode="numeric">`;
+const textIn = (sec, r, f, ph = '') => `<input data-sec="${sec}" data-f="${f}" value="${esc(r[f])}" placeholder="${esc(ph)}">`;
+const delBtn = sec => `<td class="del"><button class="x-btn" data-act="sdel" data-sec="${sec}" title="삭제">×</button></td>`;
+
+function contractHTML() {
+  const rows = settle.contract.map(r => `<tr data-rid="${r.id}">
+    <td>${textIn('contract', r, 'name', '예: 분양가')}</td>
+    <td>${moneyIn('contract', r, 'total')}</td>
+    <td>${moneyIn('contract', r, 'paid')}</td>
+    <td>${moneyIn('contract', r, 'midLoan')}</td>
+    <td class="calc" data-calc="bal-${r.id}"></td>
+    <td>${textIn('contract', r, 'memo', '메모')}</td>
+    ${delBtn('contract')}</tr>`).join('');
+  return `<table class="st" style="min-width:820px"><colgroup><col style="width:9rem"><col style="width:9.5rem"><col style="width:9.5rem"><col style="width:9.5rem"><col style="width:9.5rem"><col><col style="width:2.5rem"></colgroup>
+    <thead><tr><th>항목</th><th class="price">총액</th><th class="price">이미 낸 돈</th><th class="price">중도금대출로 냄</th><th class="price">남은 잔금</th><th>비고</th><th></th></tr></thead>
+    <tbody>${rows || `<tr><td colspan="7" class="empty">줄을 추가해 주세요</td></tr>`}</tbody>
+    <tfoot><tr><td>합계</td><td class="calc" data-calc="cTotal"></td><td class="calc" data-calc="cPaid"></td><td class="calc" data-calc="cMid"></td><td class="calc" data-calc="cBal"></td><td colspan="2"></td></tr></tfoot></table>`;
+}
+function taxHTML() {
+  const t = settle.tax;
+  return `<div class="tax-grid"><div class="tax-in">
+      <div class="lbl">취득가액 (과세표준) <span class="sel-count" id="taxBaseTag"></span></div>
+      <div class="inline"><input class="money" id="taxBase" data-sec="tax" data-f="base" inputmode="numeric" placeholder="0">
+        <button class="btn-small btn-gray" data-act="taxauto">분양 대금 합계로</button></div>
+      <label class="row"><input type="checkbox" data-sec="tax" data-f="over85" ${t.over85 ? 'checked' : ''}> 전용면적 85㎡ 초과 (농어촌특별세 0.2%)</label>
+      <label class="row"><input type="checkbox" data-sec="tax" data-f="first" ${t.first ? 'checked' : ''}> 생애최초 주택 감면</label>
+      ${t.first ? `<div class="inline sub-in"><span class="lbl" style="margin:0;white-space:nowrap">감면 한도</span>${moneyIn('tax', t, 'firstCap')}</div>` : ''}
+      <label class="row"><input type="checkbox" data-sec="tax" data-f="manualOn" ${t.manualOn ? 'checked' : ''}> 금액 직접 입력 (법무사 견적 받으면)</label>
+      ${t.manualOn ? `<div class="inline sub-in">${moneyIn('tax', t, 'manual')}</div>` : ''}
+    </div>
+    <div class="flow-box" id="taxBreak"></div></div>
+    <p class="hint">무주택자가 1주택을 사는 경우 기준이에요 (6억 이하 1%, 6억~9억 1~3%, 9억 초과 3%). 다주택자나 조정대상지역은 세율이 달라요. 분양가에 포함된 부가세는 취득가액에서 빠지고, 후불제 이자 등은 들어갈 수 있으니 최종 금액은 법무사 견적으로 덮어쓰세요.</p>`;
+}
+function loansHTML() {
+  const opt = (v, l, cur) => `<option value="${v}" ${cur === v ? 'selected' : ''}>${l}</option>`;
+  const rows = settle.loans.map(r => `<tr data-rid="${r.id}">
+    <td>${textIn('loans', r, 'name', '예: 잔금대출')}</td>
+    <td>${moneyIn('loans', r, 'amount')}</td>
+    <td><input data-sec="loans" data-f="rate" data-num value="${r.rate || ''}" placeholder="4.0" inputmode="decimal" style="text-align:right"></td>
+    <td><input data-sec="loans" data-f="years" data-num value="${r.years || ''}" placeholder="30" inputmode="numeric" style="text-align:right"></td>
+    <td><select data-sec="loans" data-f="method">${opt('eq', '원리금균등', r.method)}${opt('prin', '원금균등', r.method)}${opt('bullet', '만기일시', r.method)}</select></td>
+    <td class="calc" data-calc="mon-${r.id}"></td>
+    <td class="calc" data-calc="int-${r.id}" style="color:#888;font-weight:normal"></td>
+    <td>${textIn('loans', r, 'memo', '예: 5년 고정')}</td>
+    ${delBtn('loans')}</tr>`).join('');
+  return `<table class="st" style="min-width:900px"><colgroup><col style="width:8.5rem"><col style="width:9.5rem"><col style="width:5rem"><col style="width:4.5rem"><col style="width:7.5rem"><col style="width:8.5rem"><col style="width:9rem"><col><col style="width:2.5rem"></colgroup>
+    <thead><tr><th>대출 이름</th><th class="price">금액</th><th class="price">금리(%)</th><th class="price">기간(년)</th><th>상환 방식</th><th class="price">월 상환(첫 달)</th><th class="price">총 이자</th><th>비고</th><th></th></tr></thead>
+    <tbody>${rows || `<tr><td colspan="9" class="empty">대출을 추가해 주세요</td></tr>`}</tbody>
+    <tfoot><tr><td>합계</td><td class="calc" data-calc="loanSum"></td><td colspan="3"></td><td class="calc" data-calc="loanMon"></td><td class="calc" data-calc="loanInt" style="color:#888"></td><td colspan="2"></td></tr></tfoot></table>`;
+}
+function simpleHTML(sec, ph) {
+  const rows = settle[sec].map(r => `<tr data-rid="${r.id}">
+    <td>${textIn(sec, r, 'name', ph)}</td>
+    <td>${moneyIn(sec, r, 'amount')}</td>
+    <td>${textIn(sec, r, 'memo', '메모')}</td>
+    ${delBtn(sec)}</tr>`).join('');
+  return `<table class="st" style="min-width:560px"><colgroup><col style="width:14rem"><col style="width:10rem"><col><col style="width:2.5rem"></colgroup>
+    <thead><tr><th>항목</th><th class="price">금액</th><th>비고</th><th></th></tr></thead>
+    <tbody>${rows || `<tr><td colspan="4" class="empty">줄을 추가해 주세요</td></tr>`}</tbody>
+    <tfoot><tr><td>합계</td><td class="calc" data-calc="${sec}Sum"></td><td colspan="2"></td></tr></tfoot></table>`;
+}
+
+function renderSettle() {
+  pendingSettle = false;
+  $('secContract').innerHTML = contractHTML();
+  $('secTax').innerHTML = taxHTML();
+  $('secLoans').innerHTML = loansHTML();
+  $('secFunds').innerHTML = simpleHTML('funds', '예: 보유 현금');
+  $('secCosts').innerHTML = simpleHTML('costs', '예: 입주청소');
+  $('optRepay').checked = settle.repayMid;
+  if (!settle.tax.baseAuto) $('taxBase').value = fmtNum(settle.tax.base);
+  refreshCalc();
+}
+function refreshCalc() {
+  const k = calcSettle();
+  const set = (key, html, neg) => document.querySelectorAll(`#tab-settle [data-calc="${key}"]`).forEach(n => { n.innerHTML = html; n.classList.toggle('neg', !!neg); });
+  k.contract.forEach(r => set('bal-' + r.id, won(r.bal), r.bal < 0));
+  set('cTotal', won(k.cTotal)); set('cPaid', won(k.cPaid)); set('cMid', won(k.cMid)); set('cBal', won(k.cBal), k.cBal < 0);
+  k.loans.forEach(l => { set('mon-' + l.id, l.monthly ? won(l.monthly) : '-'); set('int-' + l.id, l.interest ? won(l.interest) : '-'); });
+  set('loanSum', won(k.loanSum)); set('loanMon', won(k.loanMon)); set('loanInt', won(k.loanInt));
+  set('fundsSum', won(k.fundsSum)); set('costsSum', won(k.costsSum));
+
+  // 취득세
+  const tb = $('taxBase');
+  if (tb) {
+    if (settle.tax.baseAuto && document.activeElement !== tb) tb.value = fmtNum(k.base);
+    $('taxBaseTag').textContent = settle.tax.baseAuto ? '· 자동 (분양 대금 총액)' : '· 직접 입력함';
+  }
+  const fl = (label, v, cls = '') => `<div class="fl ${cls}"><span>${label}</span><span class="v">${v}</span></div>`;
+  let tx = `<h3>취득세 계산</h3>` +
+    fl('적용 세율', k.pct ? k.pct.toFixed(2) + '%' : '-') +
+    fl('취득세', won(k.acq)) +
+    (settle.tax.first ? fl('생애최초 감면', '−' + won(k.deduct), 'minus') : '') +
+    fl('지방교육세', won(k.edu)) +
+    (settle.tax.over85 ? fl('농어촌특별세', won(k.rural)) : fl('농어촌특별세 (85㎡ 이하 비과세)', '0원', 'muted')) +
+    fl('자동 계산 합계', won(k.autoTax), 'sub');
+  if (settle.tax.manualOn) tx += fl('👉 직접 입력한 금액 사용', won(k.taxTotal), 'sub');
+  $('taxBreak').innerHTML = tx;
+
+  // 최종 정리
+  const nm = (x, d) => esc(x.name || d);
+  let inBox = `<h3>➕ 들어오는 돈</h3>`;
+  settle.funds.forEach(f => inBox += fl(nm(f, '내 돈'), won(f.amount), f.amount ? '' : 'muted'));
+  settle.loans.forEach(l => inBox += fl(nm(l, '대출'), won(l.amount), l.amount ? '' : 'muted'));
+  inBox += fl('합계', won(k.inflow), 'sub');
+  let outBox = `<h3>➖ 나가는 돈</h3>`;
+  k.contract.forEach(r => outBox += fl(nm(r, '분양 대금') + ' 잔금', won(r.bal), r.bal ? '' : 'muted'));
+  if (settle.repayMid) outBox += fl('중도금대출 상환', won(k.midRepay), k.midRepay ? '' : 'muted');
+  outBox += fl('취득세 등' + (settle.tax.manualOn ? ' (직접 입력)' : ''), won(k.taxTotal), k.taxTotal ? '' : 'muted');
+  settle.costs.forEach(c => outBox += fl(nm(c, '기타 비용'), won(c.amount), c.amount ? '' : 'muted'));
+  outBox += fl('합계', won(k.outflow), 'sub');
+
+  const plus = k.left >= 0;
+  $('settleSummary').innerHTML = `<div class="summary">
+      <div class="stat"><div class="label">들어오는 돈 (내 돈 + 대출)</div><div class="value">${won(k.inflow)}</div></div>
+      <div class="stat"><div class="label">나가는 돈</div><div class="value">${won(k.outflow)}</div></div>
+      <div class="stat ${plus ? 'plus' : 'minus'}"><div class="label">${plus ? '남는 돈' : '부족한 돈'}</div><div class="value">${won(Math.abs(k.left))}</div></div>
+      <div class="stat rent"><div class="label">월 대출 상환 (첫 달)</div><div class="value">월 ${won(k.loanMon)}</div></div>
+    </div>
+    <div class="flow"><div class="flow-box">${inBox}</div><div class="flow-box">${outBox}</div></div>`;
+}
+
+function settleVal(el) {
+  const sec = el.dataset.sec, f = el.dataset.f;
+  if (!sec || !f) return false;
+  const v = el.type === 'checkbox' ? el.checked
+    : el.classList.contains('money') ? parsePrice(el.value)
+    : el.dataset.num !== undefined ? (parseFloat(el.value) || 0)
+    : el.value;
+  if (sec === 'tax') { settle.tax[f] = v; if (f === 'base') settle.tax.baseAuto = false; }
+  else if (sec === 'opt') settle[f] = v;
+  else {
+    const rid = el.closest('[data-rid]')?.dataset.rid;
+    const row = (settle[sec] || []).find(r => r.id === rid);
+    if (!row) return false;
+    row[f] = v;
+  }
+  return true;
+}
+const tabSettle = $('tab-settle');
+tabSettle.addEventListener('input', e => {
+  const el = e.target;
+  if (el.type === 'checkbox' || el.tagName === 'SELECT') return;
+  if (settleVal(el)) refreshCalc();
+});
+tabSettle.addEventListener('change', e => {
+  const el = e.target;
+  if (!el.dataset.sec) return;
+  if (!settleVal(el)) return;
+  if (el.type === 'checkbox' || el.tagName === 'SELECT') { renderSettle(); saveSettle(); return; }
+  if (el.classList.contains('money')) el.value = fmtNum(parsePrice(el.value));
+  refreshCalc();
+  saveSettle();
+});
+tabSettle.addEventListener('keydown', e => {
+  if (e.key === 'Enter' && e.target.tagName === 'INPUT') e.target.blur();
+});
+tabSettle.addEventListener('click', e => {
+  const b = e.target.closest('button[data-act]'); if (!b) return;
+  const sec = b.dataset.sec;
+  if (b.dataset.act === 'sadd') {
+    const row = sec === 'contract' ? contractRow('') : sec === 'loans' ? loanRow('') : simpleRow('');
+    settle[sec].push(row);
+    renderSettle(); saveSettle();
+    const inp = document.querySelector(`#tab-settle [data-rid="${row.id}"] input`);
+    if (inp) inp.focus();
+  }
+  if (b.dataset.act === 'sdel') {
+    const rid = b.closest('[data-rid]')?.dataset.rid;
+    const row = settle[sec].find(r => r.id === rid); if (!row) return;
+    const hasValue = row.amount || row.total || row.paid || row.midLoan;
+    if (hasValue && !confirm(`'${row.name || '이 줄'}'을(를) 삭제할까요?`)) return;
+    settle[sec] = settle[sec].filter(r => r.id !== rid);
+    renderSettle(); saveSettle();
+  }
+  if (b.dataset.act === 'taxauto') {
+    settle.tax.baseAuto = true; settle.tax.base = 0;
+    renderSettle(); saveSettle();
+  }
+});
+tabSettle.addEventListener('focusout', () => setTimeout(() => {
+  if (pendingSettle && !settleTyping()) renderSettle();
+}, 0));
+
+// ===================================================================
+//  내보내기 / 백업 (견적 + 살 것 메모 + 잔금 정리)
 // ===================================================================
 $('btnCsv').onclick = () => {
   const rows = [['구분','항목','후보','업체·제품','금액','렌탈(월)','연락처','링크','비고','선택']];
@@ -924,7 +1266,7 @@ $('btnCsv').onclick = () => {
   const csv = rows.map(r => r.map(v => `"${String(v ?? '').replace(/"/g, '""')}"`).join(',')).join('\r\n');
   download('\uFEFF' + csv, '이사준비_견적비교.csv', 'text/csv;charset=utf-8');
 };
-$('btnBackup').onclick = () => download(JSON.stringify({ version: 2, items, shopping: shops }, null, 2),
+$('btnBackup').onclick = () => download(JSON.stringify({ version: 3, items, shopping: shops, settle }, null, 2),
   `이사준비_백업_${new Date().toISOString().slice(0, 10)}.json`, 'application/json');
 $('btnRestore').onclick = () => $('fileInput').click();
 $('fileInput').onchange = e => {
@@ -937,12 +1279,14 @@ $('fileInput').onchange = e => {
       const qItems = isOld ? data : data.items;
       if (!Array.isArray(qItems)) throw 0;
       const sh = isOld ? null : migrateShop(data.shopping);
+      const st = (!isOld && data.settle) ? migrateSettle(data.settle) : null;
       const msg = isOld
-        ? `백업에서 견적 후보 ${qItems.length}개를 불러올까요?\n(살 것 메모는 그대로 두고, 견적만 덮어써요)`
-        : `백업에서 견적 후보 ${qItems.length}개, 가게 ${sh.length}곳을 불러올까요?\n(지금 데이터는 덮어써지고, 상대방 화면에도 바로 반영돼요)`;
+        ? `백업에서 견적 후보 ${qItems.length}개를 불러올까요?\n(살 것 메모·잔금 정리는 그대로 두고, 견적만 덮어써요)`
+        : `백업에서 견적 후보 ${qItems.length}개, 가게 ${sh.length}곳${st ? ', 잔금 정리' : ''}를 불러올까요?\n(지금 데이터는 덮어써지고, 상대방 화면에도 바로 반영돼요)`;
       if (!confirm(msg)) return;
       items = migrate(qItems); editingId = null; addingName = null; persist();
       if (sh) { shops = sh; persistShop(); }
+      if (st) { settle = st; renderSettle(); saveSettle(); }
     } catch { alert('백업 파일이 올바르지 않아요.'); }
   };
   reader.readAsText(file);
@@ -957,9 +1301,10 @@ function download(content, filename, type) {
 
 let savedTab = 'quote';
 try { savedTab = localStorage.getItem('moving-tab') || 'quote'; } catch {}
-showTab(savedTab === 'shop' ? 'shop' : 'quote');
+showTab(TABS.includes(savedTab) ? savedTab : 'quote');
 render();
 renderShop();
+renderSettle();
 </script>
 
 <!-- ===================== Firebase 연결 부분 ===================== -->
@@ -985,6 +1330,7 @@ const auth = getAuth(app);
 const db = getDatabase(app);
 const dataRef = ref(db, 'planner/items');
 const shopRef = ref(db, 'planner/shopping');
+const settleRef = ref(db, 'planner/settle');
 let unsubs = [];
 
 const showGate = msg => { el('gate').style.display = 'flex'; el('gateMsg').textContent = msg || ''; };
@@ -1002,7 +1348,7 @@ el('btnLogout').onclick = () => signOut(auth);
 
 onAuthStateChanged(auth, user => {
   unsubs.forEach(f => f()); unsubs = [];
-  window.cloudSave = null; window.cloudSaveShop = null;
+  window.cloudSave = null; window.cloudSaveShop = null; window.cloudSaveSettle = null;
   if (!user) { showGate(''); return; }
   el('gateMsg').textContent = '불러오는 중…';
 
@@ -1020,6 +1366,11 @@ onAuthStateChanged(auth, user => {
   unsubs.push(onValue(shopRef, snap => {
     window.cloudSaveShop = saver(shopRef);
     window.applyShop(snap.val());
+  }, () => {}));
+
+  unsubs.push(onValue(settleRef, snap => {
+    window.cloudSaveSettle = saver(settleRef);
+    window.applySettle(snap.val());
   }, () => {}));
 });
 </script>
