@@ -38,6 +38,9 @@
   .stat.rent .value { color: #1a5fd0; }
   .stat.plus .value { color: #27ae60; }
   .stat.minus .value { color: #e74c3c; }
+  .stat.sp1 { background: #fdeeee; } .stat.sp1 .value { color: #c0392b; }
+  .stat.sp2 { background: #fff5e6; } .stat.sp2 .value { color: #d68910; }
+  .stat.sp3 { background: #f1f3f4; } .stat.sp3 .value { color: #7f8c8d; }
   .sel-title { font-size: .92rem; color: #777; margin: 14px 0 6px; }
   .sel-empty { font-size: .92rem; color: #aaa; padding: 10px 0; }
   .toolbar { display: flex; gap: 8px; margin-bottom: 12px; flex-wrap: wrap; }
@@ -50,12 +53,23 @@
   .status-wait { color: #e74c3c; font-size: .92rem; font-weight: bold; white-space: nowrap; }
   .title { font-weight: bold; font-size: 1.08rem; }
   .meta { color: #888; font-size: .92rem; }
-  .head-right { display: flex; align-items: center; gap: 10px; }
+  .head-right { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
   .multi-toggle { display: inline-flex; align-items: center; gap: 4px; font-size: .85rem; color: #555; background: #fff; border: 1px solid #d8dde3; padding: 3px 9px; border-radius: 12px; cursor: pointer; white-space: nowrap; }
   .multi-toggle.on { border-color: #2d7ff9; color: #1a5fd0; background: #eef5ff; }
   .head-in { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 6px; }
   .add-row-btn { width: 100%; background: none; color: #2d7ff9; font-size: .92rem; padding: 7px 12px; border-radius: 0; text-align: left; }
   .add-row-btn:hover { background: #f3f8ff; }
+
+  /* 우선순위 */
+  .pri-seg { display: inline-flex; border: 1px solid #d8dde3; border-radius: 12px; overflow: hidden; background: #fff; }
+  .pri-btn { padding: 3px 8px; font-size: .8rem; background: #fff; color: #999; border-radius: 0; border-left: 1px solid #e3e6ea; white-space: nowrap; }
+  .pri-btn:first-child { border-left: none; }
+  .pri-btn:hover { background: #f5f6f8; }
+  .pri-btn.on.p1 { background: #e74c3c; color: #fff; }
+  .pri-btn.on.p2 { background: #f39c12; color: #fff; }
+  .pri-btn.on.p3 { background: #95a5a6; color: #fff; }
+  .pri-tag { display: inline-block; font-size: .75rem; padding: 1px 6px; border-radius: 8px; margin-right: 6px; color: #fff; white-space: nowrap; vertical-align: middle; }
+  .pri-tag.p1 { background: #e74c3c; } .pri-tag.p2 { background: #f39c12; } .pri-tag.p3 { background: #95a5a6; }
 
   .cheap { display: inline-block; font-size: .8rem; color: #1e8449; background: #e3f6ea; padding: 1px 6px; border-radius: 8px; margin-right: 6px; }
   .rent-tag { display: inline-block; font-size: .8rem; color: #1a5fd0; background: #e8f0fe; padding: 1px 6px; border-radius: 8px; margin-right: 6px; }
@@ -178,6 +192,8 @@
   .st tr.sdragging { box-shadow: 0 2px 8px rgba(45,127,249,.25); }
   .st tr.qcat td { background: #f0f3f7; font-weight: bold; }
   .st td.qrent { color: #1a5fd0; font-size: .85rem; font-weight: normal; }
+  .st tr.later-off td { color: #bbb; }
+  .st tr.later-off td.price { text-decoration: line-through; }
   .card-head { display: flex; justify-content: space-between; align-items: center; gap: 8px; margin-bottom: 10px; flex-wrap: wrap; }
   .card-head h2 { margin: 0; }
   .hint { font-size: .85rem; color: #888; line-height: 1.55; margin: 8px 0 0; }
@@ -262,7 +278,7 @@
     <div class="card">
       <h2>요약</h2>
       <div class="summary" id="summary"></div>
-      <div class="sel-title">선택한 후보</div>
+      <div class="sel-title">선택한 후보 (우선순위 순)</div>
       <div id="selectedList"></div>
     </div>
 
@@ -270,6 +286,7 @@
       <div class="toolbar">
         <select id="filterCat"><option value="">전체 구분</option><option>시공</option><option>구매</option><option>서비스</option><option>기타</option></select>
         <select id="filterStatus"><option value="">전체 상태</option><option value="wait">미결정만</option><option value="done">결정완료만</option></select>
+        <select id="filterPri"><option value="">전체 우선순위</option><option value="1">①필수</option><option value="2">②입주후</option><option value="3">③나중</option><option value="0">미지정</option></select>
         <input id="search" placeholder="검색 (항목, 업체, 비고)">
         <span style="flex:1"></span>
         <button class="btn-gray" id="btnCsv">엑셀(CSV) 내보내기</button>
@@ -336,6 +353,7 @@
       <div class="sx" id="secExtra"></div>
       <div class="flow-box" id="sec6Box" style="margin-top:10px"></div>
       <label class="row-check"><input type="checkbox" id="optQuote" data-sec="opt" data-f="includeQuote"> 남는 돈 계산에 포함</label>
+      <label class="row-check"><input type="checkbox" id="optLater" data-sec="opt" data-f="excludeLater"> <span class="pri-tag p3">③나중</span> 항목은 남는 돈 계산에서 빼기 (입주 때 필요한 돈만 보기)</label>
       <p class="hint">위쪽은 견적 비교 탭에서 '선택'한 후보가 자동으로 들어와요 (고치려면 견적 비교 탭에서). 렌탈은 월 금액이라 합계에서 빠져요. ⑤에 같은 걸 적어뒀다면 두 번 계산되니 ⑤에서 지워주세요.</p>
     </div>
   </div>
@@ -346,7 +364,13 @@
 <script>
 const CATS = ['시공','구매','서비스','기타'];
 const NEW_ID = '__new__';
+const PRI = {
+  1: { short: '①필수', label: '입주 전 필수' },
+  2: { short: '②입주후', label: '입주 후 바로' },
+  3: { short: '③나중', label: '나중에' }
+};
 const $ = id => document.getElementById(id);
+const priTag = p => PRI[p] ? `<span class="pri-tag p${p}" title="${PRI[p].label}">${PRI[p].short}</span>` : '';
 
 // ---------- 보기 설정 (글자 크기 / 업체칸 폭) : 기기마다 따로 저장 ----------
 const VIEW_KEY = 'moving-view';
@@ -439,8 +463,10 @@ function migrate(arr) {
   return toArr(arr).filter(Boolean).map(i => {
     let contact = i.contact || '', link = i.link;
     if (link === undefined) { link = ''; if (/^https?:\/\//.test(contact)) { link = contact; contact = ''; } }
+    const p = Number(i.pri);
     return {
       id: String(i.id || Date.now() + '' + Math.random()), selected: !!i.selected, multi: !!i.multi, rental: !!i.rental,
+      pri: [1, 2, 3].includes(p) ? p : 0,
       cat: i.cat || '기타', name: i.name || '', vendor: i.vendor || '', price: Number(i.price) || 0,
       contact: formatPhone(contact), link: link || '', memo: i.memo || ''
     };
@@ -460,6 +486,7 @@ function persist() {
   else alert('아직 서버에 연결되지 않았어요. 잠시 후 다시 시도해 주세요.');
 }
 function isMulti(name) { return items.some(i => i.name === name && i.multi); }
+function priOf(name) { const it = items.find(i => i.name === name); return it ? it.pri : 0; }
 function isRent(i) { return !!i.rental && i.cat === '구매'; }
 function priceText(i) { return i.price ? (isRent(i) ? '월 ' : '') + won(i.price) : '-'; }
 ['pointerup', 'pointercancel'].forEach(ev => document.addEventListener(ev, () => setTimeout(() => noDrag = false, 0)));
@@ -501,7 +528,7 @@ $('btnAdd').onclick = () => {
   const existing = items.find(i => i.name === data.name);
   if (existing) data.cat = existing.cat;
   data.rental = data.cat === '구매' && $('fRental').checked;
-  items.push({ id: newId(), selected: false, multi: isMulti(data.name), ...data });
+  items.push({ id: newId(), selected: false, multi: isMulti(data.name), pri: priOf(data.name), ...data });
   ['fVendor','fPrice','fContact','fLink','fMemo'].forEach(id => $(id).value = '');
   $('fRental').checked = false;
   $('fVendor').focus();
@@ -525,7 +552,7 @@ function saveEdit() {
     const group = items.filter(i => i.name === addingName);
     if (!group.length) { alert('그 사이에 이 항목이 삭제됐어요.'); cancelEdit(); return; }
     const lastIdx = items.lastIndexOf(group[group.length - 1]);
-    items.splice(lastIdx + 1, 0, { id: newId(), selected: false, multi: isMulti(addingName), cat: group[0].cat, name: addingName, ...data });
+    items.splice(lastIdx + 1, 0, { id: newId(), selected: false, multi: isMulti(addingName), pri: priOf(addingName), cat: group[0].cat, name: addingName, ...data });
   } else {
     const it = items.find(i => i.id === editingId);
     if (!it) { alert('그 사이에 이 후보가 삭제됐어요.'); cancelEdit(); return; }
@@ -549,6 +576,12 @@ function toggleSelect(id) {
 }
 function unselect(id) { const it = items.find(i => i.id === id); if (it) { it.selected = false; persist(); } }
 function toggleRental(id, on) { const it = items.find(i => i.id === id); if (it) { it.rental = on; persist(); } }
+function setPri(name, p) {
+  const list = items.filter(i => i.name === name); if (!list.length) return;
+  const next = list[0].pri === p ? 0 : p;
+  list.forEach(i => i.pri = next);
+  persist();
+}
 
 function toggleMulti(name, on) {
   const list = items.filter(i => i.name === name);
@@ -571,7 +604,7 @@ function groupInfo(list, name) {
   const minOne = oneP.length ? Math.min(...oneP) : null;
   const minRent = rentP.length ? Math.min(...rentP) : null;
   return {
-    selN, done: selN > 0, multi: list.some(i => i.multi), buy: list[0].cat === '구매',
+    selN, done: selN > 0, multi: list.some(i => i.multi), buy: list[0].cat === '구매', pri: list[0].pri,
     oneP, rentP, minOne, minRent,
     minText: (minOne !== null ? ' · 최저 ' + won(minOne) : '') + (minRent !== null ? ' · 렌탈 최저 월 ' + won(minRent) : ''),
     statusText: selN === 0 ? '미결정' : selN === 1 ? '✔ 결정완료' : `✔ 선택 ${selN}개`,
@@ -583,10 +616,13 @@ function isMinOf(it, g) {
                     : (g.minOne !== null && it.price === g.minOne && g.oneP.length > 1);
 }
 function headHTML(name, list, g) {
+  const seg = [1, 2, 3].map(p =>
+    `<button class="pri-btn p${p} ${g.pri === p ? 'on' : ''}" data-pri="${p}" data-pname="${esc(name)}" title="${PRI[p].label} (한 번 더 누르면 해제)">${PRI[p].short}</button>`).join('');
   return `<div class="head-in">
     <div><span class="drag-handle">⠿</span><span class="badge b-${esc(list[0].cat)}">${esc(list[0].cat)}</span><span class="title">${esc(name)}</span>
       <span class="meta"> · 후보 ${list.length}개${g.minText}</span></div>
     <div class="head-right">
+      <div class="pri-seg">${seg}</div>
       <div class="${g.done ? 'status-done' : 'status-wait'}">${g.statusText}</div>
       <label class="multi-toggle ${g.multi ? 'on' : ''}" title="여러 후보를 함께 선택할 수 있어요 (예: 방마다 다른 커튼)">
         <input type="checkbox" data-multi="${esc(name)}" ${g.multi ? 'checked' : ''}> 중복선택
@@ -752,7 +788,10 @@ function render() {
   const posInGroup = new Map();
   groups.forEach(list => list.forEach((it, i) => posInGroup.set(it.id, i)));
 
+  // 선택한 후보: 우선순위 → 구분 → 항목 순서 → 후보 번호
+  const priRank = p => p || 9;
   const selected = items.filter(i => i.selected).sort((a, b) =>
+    (priRank(a.pri) - priRank(b.pri)) ||
     (CATS.indexOf(a.cat) - CATS.indexOf(b.cat)) ||
     (groupOrder.get(a.name) - groupOrder.get(b.name)) ||
     (posInGroup.get(a.id) - posInGroup.get(b.id)));
@@ -763,6 +802,10 @@ function render() {
   oneTime.forEach(i => byCat[i.cat] = (byCat[i.cat] || 0) + i.price);
   const waitCount = [...groups.values()].filter(g => !g.some(i => i.selected)).length;
   let html = `<div class="stat total"><div class="label">선택한 후보 총액</div><div class="value">${won(total)}</div></div>`;
+  [1, 2, 3].forEach(p => {
+    const v = oneTime.filter(i => i.pri === p).reduce((s, i) => s + i.price, 0);
+    if (v) html += `<div class="stat sp${p}"><div class="label">${PRI[p].short} ${PRI[p].label}</div><div class="value">${won(v)}</div></div>`;
+  });
   if (rentTotal) html += `<div class="stat rent"><div class="label">월 렌탈료 (총액에서 제외)</div><div class="value">월 ${won(rentTotal)}</div></div>`;
   CATS.forEach(c => { if (byCat[c]) html += `<div class="stat"><div class="label">${c}</div><div class="value">${won(byCat[c])}</div></div>`; });
   html += `<div class="stat"><div class="label">미결정 항목</div><div class="value" style="color:${waitCount ? '#e74c3c' : '#27ae60'}">${waitCount}개 / 총 ${groups.size}개</div></div>`;
@@ -770,7 +813,7 @@ function render() {
 
   const selCount = {};
   selected.forEach(i => selCount[i.name] = (selCount[i.name] || 0) + 1);
-  const nameHTML = it => `<span class="badge b-${esc(it.cat)}">${esc(it.cat)}</span>${esc(it.name)}${selCount[it.name] > 1 ? `<span class="sel-count">${selCount[it.name]}개</span>` : ''}`;
+  const nameHTML = it => `${priTag(it.pri)}<span class="badge b-${esc(it.cat)}">${esc(it.cat)}</span>${esc(it.name)}${selCount[it.name] > 1 ? `<span class="sel-count">${selCount[it.name]}개</span>` : ''}`;
   const selPrice = it => (isRent(it) ? '<span class="rent-tag">렌탈</span>' : '') + priceText(it);
   const unselBtn = it => `<button class="btn-small btn-gray" onclick="unselect('${it.id}')">선택해제</button>`;
   if (!selected.length) {
@@ -786,7 +829,7 @@ function render() {
     });
     $('selectedList').innerHTML = s + '</div>';
   } else {
-    let s = `<table class="sel-table"><colgroup><col style="width:12rem"><col style="width:var(--vw)"><col style="width:12rem"><col style="width:13.5rem"><col><col style="width:6.5rem"></colgroup>
+    let s = `<table class="sel-table"><colgroup><col style="width:16rem"><col style="width:var(--vw)"><col style="width:12rem"><col style="width:13.5rem"><col><col style="width:6.5rem"></colgroup>
       <tr><th>항목</th><th>업체·제품</th><th class="price">금액</th><th>연락처</th><th>비고</th><th></th></tr>`;
     let prev = null;
     selected.forEach(it => {
@@ -801,13 +844,14 @@ function render() {
     $('selectedList').innerHTML = s + '</table>';
   }
 
-  const fc = $('filterCat').value, fs = $('filterStatus').value, q = $('search').value.trim().toLowerCase();
+  const fc = $('filterCat').value, fs = $('filterStatus').value, fp = $('filterPri').value, q = $('search').value.trim().toLowerCase();
   const vis = [];
   groups.forEach((list, name) => {
     const done = list.some(i => i.selected);
     if (fc && !list.some(i => i.cat === fc)) return;
     if (fs === 'wait' && done) return;
     if (fs === 'done' && !done) return;
+    if (fp !== '' && list[0].pri !== Number(fp)) return;
     if (q && !list.some(i => [i.name, i.vendor, i.memo, i.contact, i.link].join(' ').toLowerCase().includes(q))) return;
     vis.push([name, list]);
   });
@@ -817,7 +861,8 @@ function render() {
   document.querySelectorAll('[data-add]').forEach(b => b.onclick = () => startAdd(b.dataset.add));
   document.querySelectorAll('[data-multi]').forEach(cb => cb.onchange = () => toggleMulti(cb.dataset.multi, cb.checked));
   document.querySelectorAll('[data-rent]').forEach(cb => cb.onchange = () => toggleRental(cb.dataset.rent, cb.checked));
-  document.querySelectorAll('.multi-toggle').forEach(l => l.addEventListener('pointerdown', () => noDrag = true));
+  document.querySelectorAll('[data-pri]').forEach(b => b.onclick = e => { e.stopPropagation(); setPri(b.dataset.pname, Number(b.dataset.pri)); });
+  document.querySelectorAll('.multi-toggle, .pri-seg').forEach(l => l.addEventListener('pointerdown', () => noDrag = true));
   bindDrag();
 
   if (editingId && $('eVendor')) {
@@ -833,7 +878,7 @@ function render() {
   refreshCalc();
 }
 
-['filterCat','filterStatus'].forEach(id => $(id).onchange = render);
+['filterCat','filterStatus','filterPri'].forEach(id => $(id).onchange = render);
 $('search').oninput = render;
 
 // ===================================================================
@@ -1010,7 +1055,8 @@ function defaultSettle() {
     costs: [simpleRow('중도금대출 이자 (후불제)'), simpleRow('선수관리비 (관리비 예치금)'), simpleRow('법무사·등기 비용'), simpleRow('국민주택채권 할인'), simpleRow('대출 인지세·부대비용')],
     extra: [],
     repayMid: true,
-    includeQuote: true
+    includeQuote: true,
+    excludeLater: false
   };
 }
 function migrateSettle(d) {
@@ -1030,7 +1076,8 @@ function migrateSettle(d) {
     })),
     funds: simple(d.funds), costs: simple(d.costs), extra: simple(d.extra),
     repayMid: d.repayMid !== false,
-    includeQuote: d.includeQuote !== false
+    includeQuote: d.includeQuote !== false,
+    excludeLater: !!d.excludeLater
   };
 }
 let settle = defaultSettle();
@@ -1091,18 +1138,20 @@ function calcSettle() {
   const midRepay = s.repayMid ? cMid : 0;
 
   // ⑥ 견적 비교에서 선택한 것 (구분별 소분류)
+  const isLaterOff = i => s.excludeLater && i.pri === 3;
   const groups = groupItems(items);
   const quoteCats = CATS.map(cat => {
     const rows = [];
     groups.forEach(list => { if (list[0].cat === cat) list.forEach(it => { if (it.selected) rows.push(it); }); });
     return {
       cat, rows,
-      sum: rows.filter(i => !isRent(i)).reduce((x, i) => x + i.price, 0),
-      rent: rows.filter(isRent).reduce((x, i) => x + i.price, 0)
+      sum: rows.filter(i => !isRent(i) && !isLaterOff(i)).reduce((x, i) => x + i.price, 0),
+      rent: rows.filter(i => isRent(i) && !isLaterOff(i)).reduce((x, i) => x + i.price, 0)
     };
   }).filter(c => c.rows.length);
   const quoteSum = quoteCats.reduce((x, c) => x + c.sum, 0);
   const quoteRent = quoteCats.reduce((x, c) => x + c.rent, 0);
+  const quoteLater = items.filter(i => i.selected && !isRent(i) && isLaterOff(i)).reduce((x, i) => x + i.price, 0);
   const extraSum = sum(s.extra, 'amount');
   const sec6 = quoteSum + extraSum;
   const sec6Out = s.includeQuote ? sec6 : 0;
@@ -1111,7 +1160,7 @@ function calcSettle() {
   const outflow = cBal + midRepay + taxTotal + costsSum + sec6Out;
   return { contract, cTotal, cPaid, cMid, cBal, base, pct, acq, deduct, edu, rural, autoTax, taxTotal,
            loans, loanSum, loanMon, loanInt, fundsSum, costsSum, midRepay,
-           quoteCats, quoteSum, quoteRent, extraSum, sec6, sec6Out,
+           quoteCats, quoteSum, quoteRent, quoteLater, extraSum, sec6, sec6Out, isLaterOff,
            inflow, outflow, left: inflow - outflow };
 }
 
@@ -1188,13 +1237,14 @@ function quoteHTML(k) {
     rows += `<tr class="qcat"><td colspan="2"><span class="badge b-${esc(c.cat)}">${esc(c.cat)}</span>${c.rows.length}개</td>
       <td class="calc">${won(c.sum)}</td><td class="qrent">${c.rent ? '렌탈 월 ' + won(c.rent) + ' 별도' : ''}</td></tr>`;
     c.rows.forEach(it => {
-      rows += `<tr><td>${esc(it.name)}</td>
+      const off = k.isLaterOff(it);
+      rows += `<tr class="${off ? 'later-off' : ''}"><td>${priTag(it.pri)}${esc(it.name)}</td>
         <td class="vendor" title="${esc(it.vendor)}">${esc(it.vendor)}</td>
         <td class="price">${isRent(it) ? '<span class="rent-tag">렌탈</span>' : ''}${priceText(it)}</td>
-        <td class="memo">${esc(it.memo)}</td></tr>`;
+        <td class="memo">${off ? '(나중이라 계산에서 빠짐) ' : ''}${esc(it.memo)}</td></tr>`;
     });
   });
-  return `<table class="st" style="min-width:600px"><colgroup><col style="width:10rem"><col style="width:12rem"><col style="width:11rem"><col></colgroup>
+  return `<table class="st" style="min-width:640px"><colgroup><col style="width:13rem"><col style="width:12rem"><col style="width:11rem"><col></colgroup>
     <thead><tr><th>항목</th><th>업체·제품</th><th class="price">금액</th><th>비고</th></tr></thead>
     <tbody>${rows}</tbody>
     <tfoot><tr><td colspan="2">견적 선택 합계</td><td class="calc">${won(k.quoteSum)}</td><td class="qrent">${k.quoteRent ? '월 렌탈료 ' + won(k.quoteRent) + '는 제외' : ''}</td></tr></tfoot></table>`;
@@ -1210,6 +1260,7 @@ function renderSettle() {
   $('secExtra').innerHTML = simpleHTML('extra', '예: 커튼 추가분', "견적 비교에 없는 건 '+ 기타 직접 입력'으로 추가하세요");
   $('optRepay').checked = settle.repayMid;
   $('optQuote').checked = settle.includeQuote;
+  $('optLater').checked = settle.excludeLater;
   if (!settle.tax.baseAuto) $('taxBase').value = fmtNum(settle.tax.base);
   refreshCalc();
 }
@@ -1242,7 +1293,9 @@ function refreshCalc() {
 
   // ⑥ 견적 선택
   $('secQuote').innerHTML = quoteHTML(k);
-  $('sec6Box').innerHTML = fl('견적 선택 합계', won(k.quoteSum)) + fl('기타 (직접 입력)', won(k.extraSum)) +
+  $('sec6Box').innerHTML = fl('견적 선택 합계', won(k.quoteSum)) +
+    (k.quoteLater ? fl('③나중 항목 (계산에서 빠짐)', won(k.quoteLater), 'muted') : '') +
+    fl('기타 (직접 입력)', won(k.extraSum)) +
     fl('⑥ 합계' + (settle.includeQuote ? '' : ' (남는 돈 계산에서 제외 중)'), won(k.sec6), 'sub');
 
   // 최종 정리
@@ -1366,7 +1419,7 @@ function endSettleDrag() {
   const list = settle[sec] || [];
   const map = new Map(list.map(r => [r.id, r]));
   const next = order.map(id => map.get(id)).filter(Boolean);
-  if (next.length !== list.length) { renderSettle(); return; }   // 그 사이 상대방이 고친 경우
+  if (next.length !== list.length) { renderSettle(); return; }
   const changed = next.some((r, i) => r !== list[i]);
   settle[sec] = next;
   renderSettle();
@@ -1379,9 +1432,9 @@ tabSettle.addEventListener('pointercancel', endSettleDrag);
 //  내보내기 / 백업 (견적 + 살 것 메모 + 잔금 정리)
 // ===================================================================
 $('btnCsv').onclick = () => {
-  const rows = [['구분','항목','후보','업체·제품','금액','렌탈(월)','연락처','링크','비고','선택']];
+  const rows = [['구분','항목','우선순위','후보','업체·제품','금액','렌탈(월)','연락처','링크','비고','선택']];
   groupItems(items).forEach((list, name) => list.forEach((it, idx) =>
-    rows.push([it.cat, name, idx + 1, it.vendor, it.price, isRent(it) ? 'O' : '', it.contact, it.link, it.memo, it.selected ? 'O' : ''])));
+    rows.push([it.cat, name, PRI[it.pri] ? PRI[it.pri].short : '', idx + 1, it.vendor, it.price, isRent(it) ? 'O' : '', it.contact, it.link, it.memo, it.selected ? 'O' : ''])));
   const csv = rows.map(r => r.map(v => `"${String(v ?? '').replace(/"/g, '""')}"`).join(',')).join('\r\n');
   download('\uFEFF' + csv, '이사준비_견적비교.csv', 'text/csv;charset=utf-8');
 };
